@@ -1,0 +1,120 @@
+{
+    "name": "@goparrot/square-connect-plus",
+    "description": "Extends the official Square Connect APIs Javascript library with additional functionality",
+    "version": "0.0.0",
+    "author": "Coroliov Oleg",
+    "license": "MIT",
+    "private": false,
+    "bugs": {
+        "url": "https://github.com/goparrot/square-connect-plus/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/goparrot/square-connect-plus.git"
+    },
+    "keywords": [
+        "node",
+        "typescript",
+        "square-connect",
+        "retry"
+    ],
+    "engines": {
+        "node": ">=8.9.0"
+    },
+    "main": "src/index.ts",
+    "husky": {
+        "hooks": {
+            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+            "pre-commit": "npm run pre-commit",
+            "post-commit": "git update-index --again"
+        }
+    },
+    "lint-staged": {
+        "*.{ts,json}": [
+            "npm run format",
+            "git add"
+        ]
+    },
+    "config": {
+        "commitizen": {
+            "path": "cz-conventional-changelog"
+        }
+    },
+    "scripts": {
+        "commit": "git-cz",
+        "test": "mocha 'test/unit/**/*.spec.ts' 'test/e2e/**/*.spec.ts'",
+        "test:fast": "TS_NODE_TRANSPILE_ONLY=true npm run test",
+        "test:unit": "mocha 'test/unit/**/*.spec.ts'",
+        "test:e2e": "mocha 'test/e2e/**/*.spec.ts'",
+        "test:integration": "mocha --timeout 15000 'test/integration/**/*.spec.ts'",
+        "test:integration:fast": "mocha --timeout 15000 'test/integration/**/*.spec.ts'",
+        "test:all": "mocha --timeout 15000 'test/**/*.spec.ts'",
+        "test:all:fast": "TS_NODE_TRANSPILE_ONLY=true mocha --timeout 15000 'test/**/*.spec.ts'",
+        "coverage": "nyc npm test",
+        "coverage:fast": "TS_NODE_TRANSPILE_ONLY=true nyc npm run test:fast",
+        "coverage:all": "nyc npm run test:all",
+        "coverage:all:fast": "TS_NODE_TRANSPILE_ONLY=true nyc npm run test:all:fast",
+        "format": "prettier \"**/*.{ts,js,json}\" --write",
+        "format:staged": "lint-staged",
+        "lint": "npm run lint:config:check && tslint -c tslint.json -p tsconfig.json --format stylish",
+        "lint:config:check": "tslint-config-prettier-check ./tslint.json",
+        "build": "rimraf dist && tsc -p tsconfig.build.json",
+        "remark": "remark README.md CHANGELOG.md CONTRIBUTING.md CODE_OF_CONDUCT.md .github/ -o -f -q && git add .",
+        "pre-commit": "git add . && npm run format:staged && npm run remark && npm run lint && npm run coverage:all && npm run build",
+        "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && remark CHANGELOG.md -o -f -q && git add CHANGELOG.md",
+        "prepublishOnly": "echo \"use 'npm run publish'\" && exit 1",
+        "publish": "npm run build && node bin/prepublish.js && npm publish dist",
+        "publish:dev": "npm run publish --tag dev",
+        "publish:dev:dry": "npm run publish:dev --dry-run",
+        "version": "echo \"use 'npm run release'\" && exit 1",
+        "release": "standard-version && git push && git push --tags && npm run publish && npm run github-release",
+        "release:dry": "npm run publish:dev:dry && standard-version --dry-run",
+        "github-release": "conventional-github-releaser -p angular"
+    },
+    "peerDependencies": {
+        "square-connect": "^2.20190814.0"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@commitlint/cli": "^8.2.0",
+        "@commitlint/config-conventional": "^8.2.0",
+        "@commitlint/travis-cli": "^8.2.0",
+        "@types/chai": "^4.2.8",
+        "@types/chai-as-promised": "^7.1.2",
+        "@types/mocha": "^7.0.1",
+        "@types/node": "^13.5.3",
+        "@types/sinon": "^7.5.0",
+        "@types/square-connect": "^2.20190814.3",
+        "@types/superagent": "^4.1.4",
+        "chai": "^4.2.0",
+        "chai-as-promised": "^7.1.1",
+        "commitizen": "^4.0.0",
+        "conventional-changelog-cli": "^2.0.27",
+        "conventional-github-releaser": "^3.1.3",
+        "cz-conventional-changelog": "^3.1.0",
+        "dotenv-safe": "^8.2.0",
+        "husky": "^4.2.1",
+        "lint-staged": "^10.0.7",
+        "mocha": "^7.0.1",
+        "mocha-junit-reporter": "^1.23.0",
+        "nock": "^11.7.2",
+        "nyc": "^15.0.0",
+        "prettier": "^1.18.2",
+        "remark-cli": "^7.0.0",
+        "remark-frontmatter": "^1.3.2",
+        "remark-github": "^8.0.0",
+        "remark-lint-emphasis-marker": "^1.0.3",
+        "remark-lint-strong-marker": "^1.0.3",
+        "rimraf": "^3.0.1",
+        "sinon": "^8.1.1",
+        "source-map-support": "^0.5.16",
+        "square-connect": "^2.20200122.0",
+        "standard-version": "^7.0.0",
+        "superagent": "^5.2.1",
+        "ts-node": "^8.4.1",
+        "tsconfig-paths": "^3.9.0",
+        "tslint": "^6.0.0",
+        "tslint-config-prettier": "^1.18.0",
+        "typescript": "^3.7.5"
+    }
+}
