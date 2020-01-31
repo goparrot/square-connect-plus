@@ -156,7 +156,7 @@ export class SquareClient {
         const apiClient: ApiClient = new ApiClient();
         apiClient.authentications.oauth2.accessToken = accessToken;
 
-        return mergeDeepProps(apiClient, config.originClient);
+        return mergeDeepProps(apiClient, config.originClient ?? {});
     }
 
     private getLogger(): ILogger {

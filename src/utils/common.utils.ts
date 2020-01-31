@@ -14,7 +14,7 @@ export function isObject<T = any>(item?: T): item is T {
  * @link {https://stackoverflow.com/a/34749873/3408246}
  * Deep merge props of two objects
  */
-export function mergeDeepProps<T = any, S = T>(target: T, ...sources: S[]): T {
+export function mergeDeepProps<T extends object, S extends object>(target: T, ...sources: S[]): T {
     if (!sources.length) return target;
     const source: S | undefined = sources.shift();
 

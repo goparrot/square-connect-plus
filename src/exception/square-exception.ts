@@ -1,12 +1,13 @@
 import { ModelError } from 'square-connect';
 import { Response, SuperAgentRequest } from 'superagent';
+import { ISquareException } from './i-square-exception';
 
-export class SquareException extends Error {
+export class SquareException extends Error implements ISquareException {
+    statusCode: number;
+    apiError: ModelError;
     retries?: number;
     url?: string;
     method?: string;
-    statusCode: number;
-    apiError: ModelError;
     requestArgs?: any;
 
     constructor(
@@ -22,7 +23,7 @@ export class SquareException extends Error {
         this.method = data?.method?.toUpperCase();
         this.statusCode = data?.statusCode || 500;
         this.apiError = data?.apiError || { category: 'API_ERROR', code: 'SERVICE_UNAVAILABLE', detail: 'Square API error' };
-        this.message = this.apiError?.detail ?? this.apiError.code ?? originError?.message ?? 'Square API error';
+        this.message = this.apiError.detail ?? this.apiError.code ?? originError?.message ?? 'Square API error';
         this.requestArgs = data?.requestArgs;
 
         // Error.captureStackTrace(this);
@@ -68,14 +69,20 @@ export class SquareException extends Error {
         );
     }
 
-    toString(): string {
-        return JSON.stringify({
+    toObject(): ISquareException {
+        return {
+            name: this.name,
+            message: this.message,
             retries: this.retries,
             url: this.url,
             method: this.method,
             statusCode: this.statusCode,
             requestArgs: this.requestArgs,
             apiError: this.apiError,
-        });
+        };
+    }
+
+    toString(): string {
+        return JSON.stringify(this.toObject());
     }
 }

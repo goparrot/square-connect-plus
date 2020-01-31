@@ -7,7 +7,7 @@ class SuperAgentError extends Error {
 }
 
 describe('SquareException (unit)', (): void => {
-    describe('#createFromSuperAgentError', (): void => {
+    describe('#constructor', (): void => {
         it('should be ok without args', async (): Promise<any> => {
             const squareException: SquareException = new SquareException();
 
@@ -16,6 +16,28 @@ describe('SquareException (unit)', (): void => {
             squareException.should.have.property('retries', 0);
             squareException.should.have.property('statusCode', 500);
             return squareException.should.have.property('apiError').and.eql({ category: 'API_ERROR', code: 'SERVICE_UNAVAILABLE', detail: 'Square API error' });
+        });
+
+        it('should be ok with empty data.originError object', async (): Promise<any> => {
+            // @ts-ignore
+            const squareException: SquareException = new SquareException({ apiError: {} });
+
+            squareException.should.be.instanceOf(SquareException);
+            squareException.should.have.property('message', 'Square API error');
+            squareException.should.have.property('retries', 0);
+            squareException.should.have.property('statusCode', 500);
+            return squareException.should.have.property('apiError').and.eql({});
+        });
+
+        it('should be ok with empty data.originError object and originError', async (): Promise<any> => {
+            // @ts-ignore
+            const squareException: SquareException = new SquareException({ apiError: {} }, new Error('error message'));
+
+            squareException.should.be.instanceOf(SquareException);
+            squareException.should.have.property('message', 'error message');
+            squareException.should.have.property('retries', 0);
+            squareException.should.have.property('statusCode', 500);
+            return squareException.should.have.property('apiError').and.eql({});
         });
     });
 

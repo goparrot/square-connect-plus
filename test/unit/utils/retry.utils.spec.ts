@@ -1,4 +1,4 @@
-import { exponentialDelay, makeRetryable } from '../../../src/utils';
+import { exponentialDelay, isRetryableException, makeRetryable } from '../../../src/utils';
 
 describe('retry.utils (unit)', (): void => {
     describe('#exponentialDelay', (): void => {
@@ -33,6 +33,12 @@ describe('retry.utils (unit)', (): void => {
                     retryCondition: async (_error: Error, maxRetries: number, retries: number): Promise<boolean> => maxRetries > retries,
                 },
             ).should.be.rejectedWith(Error, 'Square API error');
+        });
+    });
+
+    describe('#isRetryableException', (): void => {
+        it('should return false if Error is not instanceof SquareException', async (): Promise<any> => {
+            return isRetryableException(new Error()).should.be.eq(false);
         });
     });
 });
