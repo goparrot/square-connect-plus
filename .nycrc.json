@@ -1,0 +1,8 @@
+{
+    "extension": [".ts"],
+    "include": ["src/**/*.ts"],
+    "exclude": ["**/*.d.ts", "src/index.ts", "src/interface/index.ts", "src/test.ts"],
+    "reporter": ["lcov", "text-summary", "html"],
+    "cache": false,
+    "all": true
+}
