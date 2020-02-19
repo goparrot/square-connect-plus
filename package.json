@@ -106,7 +106,7 @@
         "remark-lint-emphasis-marker": "^1.0.3",
         "remark-lint-strong-marker": "^1.0.3",
         "rimraf": "^3.0.1",
-        "sinon": "^8.1.1",
+        "sinon": "^9.0.0",
         "source-map-support": "^0.5.16",
         "square-connect": "^2.20200122.0",
         "standard-version": "^7.0.0",
