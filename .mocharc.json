@@ -1,5 +1,15 @@
 {
     "ui": "bdd",
-    "project": "tsconfig.spec.json",
-    "require": ["ts-node/register", "source-map-support/register", "tsconfig-paths/register", "dotenv-safe/config", "./test/common.opts.ts"]
+    "project": "tsconfig.json",
+    "check-leaks": true,
+    "full-trace": true,
+    "recursive": true,
+    "exit": true,
+    "require": [
+        "ts-node/register/transpile-only",
+        "source-map-support/register",
+        "tsconfig-paths/register",
+        "dotenv-safe/config",
+        "./test/common.opts.ts"
+    ]
 }
