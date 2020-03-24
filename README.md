@@ -83,7 +83,7 @@ A set of possible settings for the original library.
 | Name           | Type      | Default                                                      | Description                                                                                                      |
 | -------------- | --------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | basePath       | `String`  | `https://connect.squareup.com`                               | The base URL against which to resolve every API call's (relative) path.                                          |
-| defaultHeaders | `Array`   | `{ 'User-Agent': 'Square-Connect-Javascript/2.20191217.0' }` | The default HTTP headers to be included for all API calls.                                                       |
+| defaultHeaders | `Array`   | `{ 'User-Agent': 'Square-Connect-Javascript/3.20200226.0' }` | The default HTTP headers to be included for all API calls.                                                       |
 | timeout        | `Number`  | `15000`                                                      | The default HTTP timeout for all API calls.                                                                      |
 | cache          | `Boolean` | `true`                                                       | If set to false an additional timestamp parameter is added to all API GET calls to prevent browser caching.      |
 | enableCookies  | `Boolean` | `false`                                                      | If set to true, the client will save the cookies from each server response, and return them in the next request. |

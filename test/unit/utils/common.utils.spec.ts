@@ -32,10 +32,7 @@ describe('common.utils (unit)', (): void => {
 
         it('should correctly merge class props with simple object', async (): Promise<any> => {
             const error: Error = new Error();
-            return mergeDeepProps(error, { name: 'x' })
-                .should.be.instanceOf(Error)
-                .and.deep.eq(error)
-                .and.have.property('name', 'x');
+            return mergeDeepProps(error, { name: 'x' }).should.be.instanceOf(Error).and.deep.eq(error).and.have.property('name', 'x');
         });
     });
 });
