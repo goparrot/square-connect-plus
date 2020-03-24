@@ -26,10 +26,7 @@ describe('SquareClient (e2e)', (): void => {
     });
 
     it('should NOT retry 501 http status', async (): Promise<any> => {
-        nock(basePath)
-            .get(/.*/)
-            .times(1000)
-            .reply(501);
+        nock(basePath).get(/.*/).times(1000).reply(501);
 
         return new SquareClient(accessToken, config)
             .getLocationsApi()
@@ -39,10 +36,7 @@ describe('SquareClient (e2e)', (): void => {
     });
 
     it('should NOT retry 400 http status', async (): Promise<any> => {
-        nock(basePath)
-            .get(/.*/)
-            .times(1000)
-            .reply(400);
+        nock(basePath).get(/.*/).times(1000).reply(400);
 
         return new SquareClient(accessToken, config)
             .getLocationsApi()
@@ -73,10 +67,7 @@ describe('SquareClient (e2e)', (): void => {
     });
 
     it('should retry 500 http status', async (): Promise<any> => {
-        nock(basePath)
-            .get(/.*/)
-            .times(1000)
-            .reply(500);
+        nock(basePath).get(/.*/).times(1000).reply(500);
 
         return new SquareClient(accessToken, config)
             .getLocationsApi()
@@ -86,10 +77,7 @@ describe('SquareClient (e2e)', (): void => {
     });
 
     it('should retry 503 http status', async (): Promise<any> => {
-        nock(basePath)
-            .get(/.*/)
-            .times(1000)
-            .reply(503);
+        nock(basePath).get(/.*/).times(1000).reply(503);
 
         return new SquareClient(accessToken, config)
             .getLocationsApi()

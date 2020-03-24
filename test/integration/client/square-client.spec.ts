@@ -33,10 +33,7 @@ describe('SquareClient (integration)', (): void => {
         });
 
         it('should retrieve data', async (): Promise<any> => {
-            return new SquareClient(accessToken, config)
-                .getLocationsApi()
-                .listLocations()
-                .should.eventually.be.fulfilled.and.have.property('locations');
+            return new SquareClient(accessToken, config).getLocationsApi().listLocations().should.eventually.be.fulfilled.and.have.property('locations');
         });
     });
 
