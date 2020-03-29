@@ -10,21 +10,25 @@
 **Square Connect Plus** is a Typescript library which extends the official Square Connect APIs library with additional functionality.
 The library does not modify request and response payload.
 
-*   [Installation](#installation)
-*   [Usage](#usage)
-*   [Versioning](#versioning)
-*   [Contributing](#contributing)
-*   [Unit Tests](#unit-tests)
-*   [Background](#background)
-*   [License](#license)
+## Table of contents
 
-## Installation
+* [Installation](#installation-arrow_up)
+* [Usage](#usage-arrow_up)
+  * [Simple example](#simple-example-arrow_up)
+  * [Advanced example](#advanced-example-arrow_up)
+* [Available Options](#available-options-arrow_up)
+* [Versioning](#versioning-arrow_up)
+* [Contributing](#contributing-arrow_up)
+* [Unit Tests](#unit-tests-arrow_up)
+* [License](#license-arrow_up)
+
+## Installation [:arrow_up:](#table-of-contents)
 
     $ npm i @goparrot/square-connect-plus square-connect
 
-## Usage
+## Usage [:arrow_up:](#table-of-contents)
 
-### Simple example
+### Simple example [:arrow_up:](#table-of-contents)
 
 ```typescript
 import { SquareClient } from '@goparrot/square-connect-plus'; 
@@ -49,7 +53,7 @@ const squareClient: SquareClient = new SquareClient(accessToken);
 })();
 ```
 
-### Advanced example
+### Advanced example [:arrow_up:](#table-of-contents)
 
 ```typescript
 import { SquareClient, exponentialDelay, retryCondition } from '@goparrot/square-connect-plus'; 
@@ -66,9 +70,9 @@ const squareClient: SquareClient = new SquareClient(accessToken, {
 });
 ```
 
-## Available Options
+## Available Options [:arrow_up:](#table-of-contents)
 
-### `retry` Options
+### `retry` Options [:arrow_up:](#table-of-contents)
 
 | Name           | Type       | Default            | Description                                                                                                                                                                                                                                 |
 | -------------- | ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -76,7 +80,7 @@ const squareClient: SquareClient = new SquareClient(accessToken, {
 | retryCondition | `Function` | `retryCondition`   | A callback to further control if a request should be retried. By default, the built-in `retryCondition` function is used.                                                                                                                   |
 | retryDelay     | `Function` | `exponentialDelay` | A callback to further control the delay between retried requests. By default, the built-in `exponentialDelay` function is used ([Exponential Backoff](https://developers.google.com/analytics/devguides/reporting/core/v3/errors#backoff)). |
 
-### `originClient` Options
+### `originClient` Options [:arrow_up:](#table-of-contents)
 
 A set of possible settings for the original library. 
 
@@ -88,20 +92,20 @@ A set of possible settings for the original library.
 | cache          | `Boolean` | `true`                                                       | If set to false an additional timestamp parameter is added to all API GET calls to prevent browser caching.      |
 | enableCookies  | `Boolean` | `false`                                                      | If set to true, the client will save the cookies from each server response, and return them in the next request. |
 
-### `logger` Option
+### `logger` Option [:arrow_up:](#table-of-contents)
 
 By default, the built-in `NullLogger` class is used.
 You can use any logger that fits the built-in `ILogger` interface
 
-## Versioning
+## Versioning [:arrow_up:](#table-of-contents)
 
 Square Connect Plus follows [Semantic Versioning](http://semver.org/).
 
-## Contributing
+## Contributing [:arrow_up:](#table-of-contents)
 
 See [`CONTRIBUTING`](https://github.com/goparrot/square-connect-plus/blob/master/CONTRIBUTING.md#contributing) file.
 
-## Unit Tests
+## Unit Tests [:arrow_up:](#table-of-contents)
 
 In order to run the test suite, install the development dependencies:
 
@@ -111,6 +115,6 @@ Then, run the following command:
 
     $ npm run coverage
 
-## License
+## License [:arrow_up:](#table-of-contents)
 
 Square Connect Plus is [MIT licensed](LICENSE).
