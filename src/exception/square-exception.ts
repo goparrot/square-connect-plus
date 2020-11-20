@@ -1,5 +1,6 @@
+/* eslint-disable no-empty */
 import { ModelError } from 'square-connect';
-import { Response, SuperAgentRequest } from 'superagent';
+import type { Response, SuperAgentRequest } from 'superagent';
 import { ISquareException } from './i-square-exception';
 
 export class SquareException extends Error implements ISquareException {
@@ -37,15 +38,22 @@ export class SquareException extends Error implements ISquareException {
         const request: SuperAgentRequest | undefined = response?.request;
 
         if (response) {
-            // console.dir(request, {depth: undefined});
+            // console.dir(request, { depth: undefined });
             // console.log(JSON.parse(JSON.stringify(response)));
+            let responseBody: { errors?: ModelError[] } = response.body || {};
+            if (!responseBody.errors && response.error) {
+                try {
+                    responseBody = JSON.parse(response.error.text);
+                } catch {}
+            }
+
             return new SquareException(
                 {
                     retries,
                     url: request?.url,
-                    statusCode: response?.status,
                     method: request?.method,
-                    apiError: response?.body?.errors?.[0],
+                    statusCode: response.status,
+                    apiError: responseBody.errors?.[0],
                     // @ts-ignore
                     requestArgs: request?._data,
                 },
