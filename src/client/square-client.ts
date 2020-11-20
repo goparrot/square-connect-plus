@@ -71,7 +71,7 @@ export class SquareClient {
     }
 
     getCustomersApi(): CustomersApi {
-        // createCustomerCard should not be retryable (#GP-2400)
+        // createCustomerCard should not be retryable
         const retryableMethods: string[] = ['listCustomers', 'retrieveCustomer', 'searchCustomers', 'deleteCustomerCard'];
 
         return this.proxify(new CustomersApi(this.getOriginApiClient()), retryableMethods);
@@ -129,7 +129,7 @@ export class SquareClient {
     }
 
     getOrdersApi(): OrdersApi {
-        const retryableMethods: string[] = ['batchRetrieveOrders', 'searchOrders', 'createOrder', 'payOrder'];
+        const retryableMethods: string[] = ['batchRetrieveOrders', 'searchOrders', 'createOrder', 'payOrder', 'calculateOrder'];
 
         return this.proxify(new OrdersApi(this.getOriginApiClient()), retryableMethods);
     }
