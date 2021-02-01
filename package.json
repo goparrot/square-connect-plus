@@ -1,7 +1,7 @@
 {
     "name": "@goparrot/square-connect-plus",
     "description": "Extends the official Square Connect APIs Javascript library with additional functionality",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "author": "Coroliov Oleg",
     "license": "MIT",
     "private": false,
@@ -98,7 +98,7 @@
         "eslint-plugin-prettier": "^3.1.2",
         "husky": "^4.2.3",
         "lint-staged": "^10.0.9",
-        "mocha": "^7.1.1",
+        "mocha": "^8.2.1",
         "mocha-junit-reporter": "^1.23.0",
         "nock": "^12.0.3",
         "nyc": "^15.0.0",

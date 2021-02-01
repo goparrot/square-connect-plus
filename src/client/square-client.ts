@@ -3,7 +3,6 @@ import {
     ApplePayApi,
     CatalogApi,
     CheckoutApi,
-    CustomersApi,
     EmployeesApi,
     InventoryApi,
     LaborApi,
@@ -18,6 +17,7 @@ import {
 import { ISquareClientConfig, ISquareClientDefaultConfig, ISquareClientMergedConfig } from '../interface';
 import { ILogger, NullLogger } from '../logger';
 import { exponentialDelay, makeRetryable, mergeDeepProps, retryCondition } from '../utils';
+import { CustomerClientApi } from './CustomerClientApi';
 
 export class SquareClient {
     private originApiClient: ApiClient;
@@ -70,11 +70,11 @@ export class SquareClient {
         return this.proxify(new CheckoutApi(this.getOriginApiClient()), retryableMethods);
     }
 
-    getCustomersApi(): CustomersApi {
+    getCustomersApi(): CustomerClientApi {
         // createCustomerCard should not be retryable
         const retryableMethods: string[] = ['listCustomers', 'retrieveCustomer', 'searchCustomers', 'deleteCustomerCard'];
 
-        return this.proxify(new CustomersApi(this.getOriginApiClient()), retryableMethods);
+        return this.proxify(new CustomerClientApi(this.getOriginApiClient()), retryableMethods);
     }
 
     getEmployeesApi(): EmployeesApi {
