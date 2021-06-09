@@ -9,4 +9,5 @@ export interface ISquareException {
     url?: string;
     method?: string;
     requestArgs?: any;
+    errors?: ModelError[];
 }
