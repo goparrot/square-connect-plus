@@ -10,9 +10,10 @@ export class SquareException extends Error implements ISquareException {
     url?: string;
     method?: string;
     requestArgs?: any;
+    errors?: ModelError[];
 
     constructor(
-        data?: { retries?: number; url?: string; method?: string; statusCode?: number; apiError?: ModelError; requestArgs?: any },
+        data?: { retries?: number; url?: string; method?: string; statusCode?: number; apiError?: ModelError; requestArgs?: any; errors?: ModelError[] },
         originError?: Error,
     ) {
         super();
@@ -26,6 +27,7 @@ export class SquareException extends Error implements ISquareException {
         this.apiError = data?.apiError || { category: 'API_ERROR', code: 'SERVICE_UNAVAILABLE', detail: 'Square API error' };
         this.message = this.apiError.detail ?? this.apiError.code ?? originError?.message ?? 'Square API error';
         this.requestArgs = data?.requestArgs;
+        this.errors = data?.errors;
 
         // Error.captureStackTrace(this);
     }
@@ -56,6 +58,7 @@ export class SquareException extends Error implements ISquareException {
                     apiError: responseBody.errors?.[0],
                     // @ts-ignore
                     requestArgs: request?._data,
+                    errors: responseBody.errors,
                 },
                 error,
             );
@@ -87,6 +90,7 @@ export class SquareException extends Error implements ISquareException {
             statusCode: this.statusCode,
             requestArgs: this.requestArgs,
             apiError: this.apiError,
+            errors: this.errors,
         };
     }
 
