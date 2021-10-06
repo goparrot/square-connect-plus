@@ -21,6 +21,8 @@ describe('retry.utils (unit)', (): void => {
                 async (): Promise<any> => {
                     throw new Error('test error');
                 },
+                'apiMethodName',
+                [],
                 {
                     maxRetries: 1,
                     retryDelay: exponentialDelay,
