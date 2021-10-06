@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import {
     ApiClient,
     ApplePayApi,
@@ -106,85 +107,85 @@ describe('SquareClient (unit)', (): void => {
 
     describe('#getApplePayApi', (): void => {
         it('should return ApplePayApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getApplePayApi().should.be.instanceOf(ApplePayApi);
+            expect(new SquareClient(accessToken).getApplePayApi()).to.be.instanceOf(ApplePayApi);
         });
     });
 
     describe('#getCatalogApi', (): void => {
         it('should return CatalogApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getCatalogApi().should.be.instanceOf(CatalogApi);
+            expect(new SquareClient(accessToken).getCatalogApi()).to.be.instanceOf(CatalogApi);
         });
     });
 
     describe('#getCheckoutApi', (): void => {
         it('should return CheckoutApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getCheckoutApi().should.be.instanceOf(CheckoutApi);
+            expect(new SquareClient(accessToken).getCheckoutApi()).to.be.instanceOf(CheckoutApi);
         });
     });
 
     describe('#getCustomersApi', (): void => {
         it('should return CustomersApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getCustomersApi().should.be.instanceOf(CustomersApi);
+            expect(new SquareClient(accessToken).getCustomersApi()).to.be.instanceOf(CustomersApi);
         });
     });
 
     describe('#getEmployeesApi', (): void => {
         it('should return EmployeesApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getEmployeesApi().should.be.instanceOf(EmployeesApi);
+            expect(new SquareClient(accessToken).getEmployeesApi()).to.be.instanceOf(EmployeesApi);
         });
     });
 
     describe('#getInventoryApi', (): void => {
         it('should return InventoryApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getInventoryApi().should.be.instanceOf(InventoryApi);
+            expect(new SquareClient(accessToken).getInventoryApi()).to.be.instanceOf(InventoryApi);
         });
     });
 
     describe('#getLaborApi', (): void => {
         it('should return LaborApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getLaborApi().should.be.instanceOf(LaborApi);
+            expect(new SquareClient(accessToken).getLaborApi()).to.be.instanceOf(LaborApi);
         });
     });
 
     describe('#getLocationsApi', (): void => {
         it('should return LocationsApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getLocationsApi().should.be.instanceOf(LocationsApi);
+            expect(new SquareClient(accessToken).getLocationsApi()).to.be.instanceOf(LocationsApi);
         });
     });
 
     describe('#getMobileAuthorizationApi', (): void => {
         it('should return MobileAuthorizationApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getMobileAuthorizationApi().should.be.instanceOf(MobileAuthorizationApi);
+            expect(new SquareClient(accessToken).getMobileAuthorizationApi()).to.be.instanceOf(MobileAuthorizationApi);
         });
     });
 
     describe('#getOAuthApi', (): void => {
         it('should return OAuthApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getOAuthApi().should.be.instanceOf(OAuthApi);
+            expect(new SquareClient(accessToken).getOAuthApi()).to.be.instanceOf(OAuthApi);
         });
     });
 
     describe('#getOrdersApi', (): void => {
         it('should return OrdersApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getOrdersApi().should.be.instanceOf(OrdersApi);
+            expect(new SquareClient(accessToken).getOrdersApi()).to.be.instanceOf(OrdersApi);
         });
     });
 
     describe('#getPaymentsApi', (): void => {
         it('should return PaymentsApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getPaymentsApi().should.be.instanceOf(PaymentsApi);
+            expect(new SquareClient(accessToken).getPaymentsApi()).to.be.instanceOf(PaymentsApi);
         });
     });
 
     describe('#getRefundsApi', (): void => {
         it('should return RefundsApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getRefundsApi().should.be.instanceOf(RefundsApi);
+            expect(new SquareClient(accessToken).getRefundsApi()).to.be.instanceOf(RefundsApi);
         });
     });
 
     describe('#getTransactionsApi', (): void => {
         it('should return TransactionsApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getTransactionsApi().should.be.instanceOf(TransactionsApi);
+            expect(new SquareClient(accessToken).getTransactionsApi()).to.be.instanceOf(TransactionsApi);
         });
     });
 });

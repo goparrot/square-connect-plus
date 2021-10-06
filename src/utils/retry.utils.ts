@@ -23,7 +23,12 @@ export function exponentialDelay(retryNumber: number): number {
 /**
  * add the ability to retry the request
  */
-export async function makeRetryable(promiseFn: (...arg: any[]) => Promise<any>, params: IRetriesOptions): Promise<any> {
+export async function makeRetryable(
+    promiseFn: (...arg: any[]) => Promise<any>,
+    apiMethodName: string,
+    retryableMethods: string[],
+    params: IRetriesOptions,
+): Promise<any> {
     let retries: number = 0;
 
     async function retry(): Promise<any> {
@@ -32,7 +37,7 @@ export async function makeRetryable(promiseFn: (...arg: any[]) => Promise<any>, 
         } catch (error) {
             const squareException: SquareException = SquareException.createFromSuperAgentError(error, retries);
 
-            if (await params.retryCondition(squareException, params.maxRetries, retries)) {
+            if (retryableMethods.includes(apiMethodName) && (await params.retryCondition(squareException, params.maxRetries, retries))) {
                 retries++;
                 const delay: number = exponentialDelay(retries);
                 await sleep(delay);

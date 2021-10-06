@@ -173,17 +173,13 @@ export class SquareClient {
 
         const handler: ProxyHandler<T> = {
             get: (target: T, apiMethodName: string): any => {
-                if (!retryableMethods.includes(apiMethodName)) {
-                    return target[apiMethodName];
-                }
-
                 return async (...args: any[]): Promise<any> => {
                     const requestFn: () => any = target[apiMethodName].bind(target, ...args);
 
                     this.getLogger().debug(`Square api request: ${JSON.stringify({ apiMethodName, args })}`);
 
                     try {
-                        return await makeRetryable(requestFn, {
+                        return await makeRetryable(requestFn, apiMethodName, retryableMethods, {
                             maxRetries: this.config.retry.maxRetries,
                             retryDelay: this.config.retry.retryDelay,
                             retryCondition: this.config.retry.retryCondition ?? retryCondition,
