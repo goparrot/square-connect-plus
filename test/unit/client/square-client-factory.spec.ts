@@ -1,3 +1,4 @@
+import { expect } from 'chai';
 import { ApiClient, CustomersApi, LocationsApi, OrdersApi, PaymentsApi, RefundsApi } from 'square-connect';
 import { SquareClient, SquareClientFactory } from '../../../src/client';
 import { ISquareClientConfig } from '../../../src/interface';
@@ -97,31 +98,31 @@ describe('SquareClientFactory (unit)', (): void => {
 
     describe('#getLocationsApi', (): void => {
         it('should return LocationsApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getLocationsApi().should.be.instanceOf(LocationsApi);
+            expect(new SquareClient(accessToken).getLocationsApi()).to.be.instanceOf(LocationsApi);
         });
     });
 
     describe('#getCustomersApi', (): void => {
         it('should return CustomersApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getCustomersApi().should.be.instanceOf(CustomersApi);
+            expect(new SquareClient(accessToken).getCustomersApi()).to.be.an.instanceof(CustomersApi);
         });
     });
 
     describe('#getPaymentsApi', (): void => {
         it('should return PaymentsApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getPaymentsApi().should.be.instanceOf(PaymentsApi);
+            expect(new SquareClient(accessToken).getPaymentsApi()).to.be.instanceOf(PaymentsApi);
         });
     });
 
     describe('#getRefundsApi', (): void => {
         it('should return RefundsApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getRefundsApi().should.be.instanceOf(RefundsApi);
+            expect(new SquareClient(accessToken).getRefundsApi()).to.be.instanceOf(RefundsApi);
         });
     });
 
     describe('#getOrdersApi', (): void => {
         it('should return OrdersApi', async (): Promise<any> => {
-            return new SquareClient(accessToken).getOrdersApi().should.be.instanceOf(OrdersApi);
+            expect(new SquareClient(accessToken).getOrdersApi()).to.be.instanceOf(OrdersApi);
         });
     });
 });
