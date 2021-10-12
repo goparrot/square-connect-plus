@@ -14,6 +14,7 @@ import {
     RefundsApi,
     TransactionsApi,
 } from 'square-connect';
+import { v4 as uuidv4 } from 'uuid';
 import { ISquareClientConfig, ISquareClientDefaultConfig, ISquareClientMergedConfig } from '../interface';
 import { ILogger, NullLogger } from '../logger';
 import { exponentialDelay, makeRetryable, mergeDeepProps, retryCondition } from '../utils';
@@ -38,10 +39,12 @@ export class SquareClient {
     }
 
     /**
-     * Generate unique idempotency key (format: reference-timestampWithMilliseconds)
+     * Generate unique idempotency key (format: first char reference-uuid)
+     * @link https://developer.squareup.com/docs/working-with-apis/idempotency
+     * Max length 45
      */
     static generateIdempotencyKey(reference: string): string {
-        return [reference, Date.now().toString()].join('-');
+        return [reference.charAt(0), uuidv4()].join('-');
     }
 
     getConfig(): ISquareClientMergedConfig {
