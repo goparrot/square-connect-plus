@@ -43,8 +43,8 @@ describe('SquareClientFactory (unit)', (): void => {
         it('should return string', async (): Promise<any> => {
             const reference: string = 'test';
             return SquareClient.generateIdempotencyKey(reference)
-                .should.be.match(new RegExp(`^${reference}-.*`))
-                .and.lengthOf(18);
+                .should.be.match(new RegExp(`^${reference.charAt(0)}-.*`))
+                .and.lengthOf(38);
         });
     });
 
