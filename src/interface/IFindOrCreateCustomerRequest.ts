@@ -1,5 +1,5 @@
-import { CreateCustomerRequest } from 'square-connect';
+import type { CreateCustomerRequest } from 'square';
 
 export interface IFindOrCreateCustomerRequest extends CreateCustomerRequest {
-    phone_number: string;
+    phoneNumber: string;
 }

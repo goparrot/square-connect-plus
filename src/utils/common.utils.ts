@@ -1,4 +1,5 @@
 export async function sleep(timeout: number): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     return new Promise((resolve: any): any => setTimeout(resolve, timeout));
 }
 
@@ -7,7 +8,7 @@ export async function sleep(timeout: number): Promise<void> {
  * @returns {boolean}
  */
 export function isObject<T = any>(item?: T): item is T {
-    return !!item && 'object' === typeof item && !Array.isArray(item);
+    return !!item && typeof item === 'object' && !Array.isArray(item);
 }
 
 /**

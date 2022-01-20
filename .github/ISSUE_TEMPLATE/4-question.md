@@ -4,7 +4,6 @@ about: Get help using Square Connect Plus
 title: 'question: '
 labels: question
 assignees: ''
-
 ---
 
 <!-- Click "Preview" for a more readable version --
@@ -20,8 +19,8 @@ Please read and follow the instructions before submitting an issue:
 
 ## Environment:
 
-*   Square Connect Plus Version: x.y.z
-*   Node version: x.y.z
+-   Square Connect Plus Version: x.y.z
+-   Node version: x.y.z
 
 ## Describe the issue
 

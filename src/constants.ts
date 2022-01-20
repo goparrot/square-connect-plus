@@ -1,6 +1,4 @@
-import { ErrorCodeType } from 'square-connect';
-
-export const retryableErrorCodes: ReadonlyArray<ErrorCodeType> = Object.freeze([
+export const retryableErrorCodes: ReadonlyArray<string> = Object.freeze([
     'RATE_LIMITED',
     'REQUEST_TIMEOUT',
     'GATEWAY_TIMEOUT',
