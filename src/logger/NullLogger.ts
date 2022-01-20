@@ -1,4 +1,4 @@
-import { ILogger } from './i-logger';
+import type { ILogger } from './ILogger';
 
 export class NullLogger implements ILogger {
     debug(): any {

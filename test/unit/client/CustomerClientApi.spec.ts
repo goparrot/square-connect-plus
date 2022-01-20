@@ -1,17 +1,19 @@
 import { expect } from 'chai';
-import { createSandbox, SinonSandbox, SinonStub } from 'sinon';
-import { Customer, CustomerFilter, SearchCustomersRequest } from 'square-connect';
-import { CustomerClientApi, IFindOrCreateCustomerRequest } from '../../../src';
+import type { SinonSandbox, SinonStub } from 'sinon';
+import { createSandbox } from 'sinon';
+import type { Customer, CustomerFilter, SearchCustomersRequest } from 'square';
+import type { IFindOrCreateCustomerRequest } from '../../../src';
+import { CustomerClientApi, SquareClientFactory } from '../../../src';
 
 describe('CustomerClientApi', (): void => {
     let customerClientApi: CustomerClientApi;
     let sandbox: SinonSandbox;
 
     const filter: CustomerFilter = {
-        phone_number: {
+        phoneNumber: {
             exact: '+14043833639',
         },
-        email_address: {
+        emailAddress: {
             exact: 'test_user@mail.com',
         },
     };
@@ -27,41 +29,35 @@ describe('CustomerClientApi', (): void => {
     };
 
     const findOrCreateCustomerRequest: IFindOrCreateCustomerRequest = {
-        phone_number: '+14043833639',
-        email_address: 'test_user@mail.com',
+        phoneNumber: '+14043833639',
+        emailAddress: 'test_user@mail.com',
     };
 
     const customer: Customer = {
         id: '60DERXYEFN77V6RSHM0ET6VWW0',
-        created_at: '2021-02-11T09:50:46.283Z',
-        updated_at: '2021-02-12T10:01:19Z',
-        given_name: 'Test',
-        family_name: 'User',
-        phone_number: '+14043833639',
+        createdAt: '2021-02-11T09:50:46.283Z',
+        updatedAt: '2021-02-12T10:01:19Z',
+        givenName: 'Test',
+        familyName: 'User',
+        phoneNumber: '+14043833639',
         note: '',
-        reference_id: '000082297466356',
+        referenceId: '000082297466356',
         preferences: {
-            email_unsubscribed: false,
+            emailUnsubscribed: false,
         },
-        groups: [
-            {
-                id: 'gv2:TJ3XC1GTHS7355B12DXHWYNRQW',
-                name: 'Email Subscribers',
-            },
-        ],
-        creation_source: 'THIRD_PARTY',
-        segment_ids: [],
+        creationSource: 'THIRD_PARTY',
+        segmentIds: [],
     };
 
     const customerWithEmail: Customer = {
         ...customer,
-        email_address: 'test_user@mail.com',
+        emailAddress: 'test_user@mail.com',
     };
 
     before(() => {
         sandbox = createSandbox();
 
-        customerClientApi = new CustomerClientApi();
+        customerClientApi = new CustomerClientApi(new SquareClientFactory().create('1111').getOriginClient());
     });
 
     beforeEach(() => {
@@ -83,25 +79,25 @@ describe('CustomerClientApi', (): void => {
         });
 
         it('should find customer', async () => {
-            searchCustomersStub.withArgs(searchCustomerReq).resolves({ customers: [customerWithEmail] });
+            searchCustomersStub.withArgs(searchCustomerReq).resolves({ result: { customers: [customerWithEmail] } });
 
             await expect(customerClientApi.findOrCreateCustomer(findOrCreateCustomerRequest)).to.eventually.be.deep.eq(customerWithEmail);
         });
 
         it('should not found customer and create customer', async () => {
-            searchCustomersStub.withArgs(searchCustomerReq).resolves({});
+            searchCustomersStub.withArgs(searchCustomerReq).resolves({ result: {} });
 
-            createCustomerStub.withArgs(findOrCreateCustomerRequest).resolves({ customer: customerWithEmail });
+            createCustomerStub.withArgs(findOrCreateCustomerRequest).resolves({ result: { customer: customerWithEmail } });
 
             await expect(customerClientApi.findOrCreateCustomer(findOrCreateCustomerRequest)).to.eventually.be.deep.eq(customerWithEmail);
         });
 
         it('should create customer', async () => {
             const fakeFindOrCreateCustomerRequest: IFindOrCreateCustomerRequest = {
-                phone_number: '+14043833639',
+                phoneNumber: '+14043833639',
             };
 
-            createCustomerStub.withArgs(fakeFindOrCreateCustomerRequest).resolves({ customer });
+            createCustomerStub.withArgs(fakeFindOrCreateCustomerRequest).resolves({ result: { customer } });
 
             await expect(customerClientApi.findOrCreateCustomer(fakeFindOrCreateCustomerRequest)).to.eventually.be.deep.eq(customer);
         });

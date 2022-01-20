@@ -5,11 +5,5 @@
     "full-trace": true,
     "recursive": true,
     "exit": true,
-    "require": [
-        "ts-node/register/transpile-only",
-        "source-map-support/register",
-        "tsconfig-paths/register",
-        "dotenv-safe/config",
-        "./test/common.opts.ts"
-    ]
+    "require": ["ts-node/register/transpile-only", "dotenv-safe/config", "test/common.opts.ts"]
 }

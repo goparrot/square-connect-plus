@@ -1,15 +1,16 @@
-import { Customer, CustomersApi, SearchCustomersRequest, SearchCustomersResponse } from 'square-connect';
-import { IFindOrCreateCustomerRequest } from '../interface';
+import type { Customer, SearchCustomersRequest } from 'square';
+import { CustomersApi } from 'square';
+import type { IFindOrCreateCustomerRequest } from '../interface';
 
 export class CustomerClientApi extends CustomersApi {
-    async findOrCreateCustomer(findOrCreateCustomerRequest: IFindOrCreateCustomerRequest): Promise<Customer> {
-        const { phone_number, email_address }: IFindOrCreateCustomerRequest = findOrCreateCustomerRequest;
+    async findOrCreateCustomer(body: IFindOrCreateCustomerRequest): Promise<Customer> {
+        const { phoneNumber, emailAddress }: IFindOrCreateCustomerRequest = body;
 
-        const searchCustomerReq: SearchCustomersRequest = {
+        const searchCustomerReq: SearchCustomersRequest & { query: { filter: { phoneNumber: { exact: string } } } } = {
             query: {
                 filter: {
-                    phone_number: {
-                        exact: phone_number,
+                    phoneNumber: {
+                        exact: phoneNumber,
                     },
                 },
                 sort: {
@@ -19,22 +20,20 @@ export class CustomerClientApi extends CustomersApi {
             },
         };
 
-        if (email_address) {
-            searchCustomerReq.query!.filter!.email_address = {
-                exact: email_address,
-            };
+        if (emailAddress) {
+            searchCustomerReq.query.filter.emailAddress = { exact: emailAddress };
 
-            const { customers }: SearchCustomersResponse = await this.searchCustomers(searchCustomerReq);
+            const { result } = await this.searchCustomers(searchCustomerReq);
 
-            const customer: Customer | undefined = customers?.shift();
+            const customer: Customer | undefined = result.customers?.shift();
 
             if (customer) {
                 return customer;
             }
         }
 
-        const { customer } = await this.createCustomer(findOrCreateCustomerRequest);
+        const { result } = await this.createCustomer(body);
 
-        return customer!;
+        return result.customer!;
     }
 }

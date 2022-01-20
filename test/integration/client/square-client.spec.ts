@@ -1,53 +1,57 @@
-import { CalculateOrderResponse, ListLocationsResponse, Order, SearchCustomersRequest } from 'square-connect';
-import { SquareClient } from '../../../src/client';
-import { SquareException } from '../../../src/exception';
-import { ISquareClientConfig } from '../../../src/interface';
+import type { CalculateOrderResponse, Order, SearchCustomersRequest } from 'square';
+import { Environment, DEFAULT_CONFIGURATION } from 'square';
+import type { ISquareClientConfig } from '../../../src';
+import { SquareClient, SquareApiException, recursiveBigIntToNumber, SquareDataMapper } from '../../../src';
 
 describe('SquareClient (integration)', (): void => {
-    const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN}`;
-    const basePath: string = `${process.env.SQUARE_BASE_URL}`;
+    const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN || ''}`;
+    const customUrl: string = `${process.env.SQUARE_SANDBOX_BASE_URL || ''}`;
 
     const config: ISquareClientConfig = {
         retry: {
             maxRetries: 1,
         },
-        originClient: {
-            timeout: 10000,
-            basePath,
+        configuration: {
+            ...DEFAULT_CONFIGURATION,
+            customUrl,
+            environment: Environment.Sandbox,
         },
     };
 
     describe('#getLocationsApi', (): void => {
-        it('should retry by timeout', async (): Promise<any> => {
+        it('should retry by timeout', async (): Promise<unknown> => {
             return new SquareClient(accessToken, {
                 ...config,
                 ...{
-                    originClient: {
+                    configuration: {
                         timeout: 1,
                     },
                 },
             })
                 .getLocationsApi()
                 .listLocations()
-                .should.eventually.be.rejectedWith(SquareException, 'Square API timeout');
+                .should.eventually.be.rejectedWith(SquareApiException, 'timeout of 1ms exceeded');
         });
 
-        it('should retrieve data', async (): Promise<any> => {
-            return new SquareClient(accessToken, config).getLocationsApi().listLocations().should.eventually.be.fulfilled.and.have.property('locations');
+        it('should retrieve data', async (): Promise<unknown> => {
+            return new SquareClient(accessToken, config)
+                .getLocationsApi()
+                .listLocations()
+                .should.eventually.be.fulfilled.and.have.property('result')
+                .and.have.property('locations');
         });
     });
 
     describe('#getCustomersApi', (): void => {
-        it('should be rejected with ModelError', async (): Promise<any> => {
-            const query: SearchCustomersRequest = {
+        it('should be rejected with ModelError', async (): Promise<unknown> => {
+            const query: SearchCustomersRequest = SquareDataMapper.toNewFormat({
                 limit: 1,
                 query: {
                     sort: {
-                        order: 'WRONG_VALUE' as any,
+                        order: 'WRONG_VALUE',
                     },
                 },
-            };
-
+            });
             return new SquareClient(accessToken, config)
                 .getCustomersApi()
                 .searchCustomers(query)
@@ -56,32 +60,36 @@ describe('SquareClient (integration)', (): void => {
     });
 
     describe('#getOrdersApi', (): void => {
-        it('should calculate order total', async (): Promise<any> => {
-            const apiClient: SquareClient = new SquareClient(accessToken, config);
-            const { locations }: ListLocationsResponse = await apiClient.getLocationsApi().listLocations();
+        it('should calculate order total', async (): Promise<void> => {
+            const apiClient: SquareClient = new SquareClient(accessToken, { configuration: { ...config.configuration, timeout: 60_000 } });
+            const { locations } = (await apiClient.getLocationsApi().listLocations()).result;
 
             if (!locations?.length) {
-                return locations?.should.have.length(0);
+                locations?.should.have.length(0);
+                return;
             }
 
             const locationId: string = locations[0].id!;
-            const orderPayload: Order = {
-                location_id: locationId,
-                line_items: [
-                    {
-                        name: 'Coca-cola',
-                        quantity: '1',
-                        base_price_money: {
-                            amount: 100,
-                            currency: 'USD',
+            const orderPayload: Order = SquareDataMapper.toNewFormat(
+                {
+                    locationId: locationId,
+                    lineItems: [
+                        {
+                            name: 'Coca-cola',
+                            quantity: '1',
+                            basePriceMoney: {
+                                amount: 100,
+                                currency: 'USD',
+                            },
                         },
-                    },
-                ],
-            };
+                    ],
+                },
+                false,
+            );
 
-            const { order }: CalculateOrderResponse = await apiClient.getOrdersApi().calculateOrder({ order: orderPayload });
+            const { order }: CalculateOrderResponse = (await apiClient.getOrdersApi().calculateOrder({ order: orderPayload })).result;
 
-            return order?.total_money?.amount?.should.eq(100);
+            recursiveBigIntToNumber(order!).totalMoney?.amount?.should.eq(100);
         });
     });
 });

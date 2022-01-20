@@ -3,8 +3,8 @@
     "compilerOptions": {
         "declaration": true,
         "sourceMap": true,
-        "incremental": false
+        "incremental": false,
+        "strict": true
     },
-    "include": ["src"],
-    "exclude": ["src/test.ts"]
+    "include": ["src"]
 }

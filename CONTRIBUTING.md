@@ -9,7 +9,7 @@ You MUST follow the [TypeScript](https://www.typescriptlang.org/docs/home.html) 
 should really read the recommendations.
 
 Check your node version `node -v`.
-You MUST have `">=10.13"`, because of <https://github.com/okonet/lint-staged#v10>.
+You MUST have `">=14"`, because of <https://github.com/okonet/lint-staged#v10>.
 
 You MUST run the `npm run coverage` command.
 

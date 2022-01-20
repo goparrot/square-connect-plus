@@ -1,8 +1,13 @@
 {
     "extension": [".ts"],
     "include": ["src/**/*.ts"],
-    "exclude": ["**/*.d.ts", "src/index.ts", "src/interface/index.ts", "src/test.ts"],
+    "exclude": ["**/*.d.ts", "src/index.ts", "src/interface/index.ts", "src/logger/index.ts"],
     "reporter": ["lcov", "text-summary", "html"],
     "cache": false,
-    "all": true
+    "all": true,
+    "check-coverage": true,
+    "per-file": true,
+    "sourceMap": true,
+    "instrument": true,
+    "skip-full": true
 }

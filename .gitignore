@@ -10,11 +10,7 @@ node_modules/
 .DS_Store
 
 # tests
-test.ts
-/test-reports
 /coverage
 /.nyc_output
-/log
 !/bin
 .env
-package-lock.json
