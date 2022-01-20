@@ -2,33 +2,33 @@
 [![Coverage Status](https://coveralls.io/repos/github/goparrot/square-connect-plus/badge.svg?branch=master)](https://coveralls.io/github/goparrot/square-connect-plus?branch=master)
 [![NPM version](https://img.shields.io/npm/v/@goparrot/square-connect-plus)](https://www.npmjs.com/package/@goparrot/square-connect-plus)
 [![Greenkeeper badge](https://badges.greenkeeper.io/goparrot/square-connect-plus.svg)](https://greenkeeper.io/)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/) 
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 # Square Connect Plus
 
-**Square Connect Plus** is a Typescript library which extends the official Square Connect APIs library with additional functionality.
+**Square Connect Plus** is a Typescript library which extends the official Square Node.js SDK library with additional functionality.
 The library does not modify request and response payload.
 
-*   [Installation](#installation)
-*   [Usage](#usage)
-*   [Versioning](#versioning)
-*   [Contributing](#contributing)
-*   [Unit Tests](#unit-tests)
-*   [Background](#background)
-*   [License](#license)
+-   [Installation](#installation)
+-   [Usage](#usage)
+-   [Versioning](#versioning)
+-   [Contributing](#contributing)
+-   [Unit Tests](#unit-tests)
+-   [Background](#background)
+-   [License](#license)
 
 ## Installation
 
-    $ npm i @goparrot/square-connect-plus square-connect@4
+    $ npm i @goparrot/square-connect-plus square@17.0.0
 
 ## Usage
 
 ### Simple example
 
 ```typescript
-import { SquareClient } from '@goparrot/square-connect-plus'; 
-import { ListLocationsResponse } from 'square-connect';
+import { SquareClient } from '@goparrot/square-connect-plus';
+import { ListLocationsResponse } from 'square';
 
 const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN}`;
 const squareClient: SquareClient = new SquareClient(accessToken);
@@ -36,7 +36,7 @@ const squareClient: SquareClient = new SquareClient(accessToken);
 (async () => {
     try {
         const listLocationsResponse: ListLocationsResponse = await squareClient.getLocationsApi().listLocations();
-        if (listLocationsResponse.errors) {
+        if (listLocationsResponse.errors.length) {
             throw new Error(`cant fetch locations`);
         }
 
@@ -52,15 +52,15 @@ const squareClient: SquareClient = new SquareClient(accessToken);
 ### Advanced example
 
 ```typescript
-import { SquareClient, exponentialDelay, retryCondition } from '@goparrot/square-connect-plus'; 
+import { SquareClient, exponentialDelay, retryCondition } from '@goparrot/square-connect-plus';
 
 const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN}`;
 const squareClient: SquareClient = new SquareClient(accessToken, {
     retry: {
-        maxRetries: 10, 
+        maxRetries: 10,
     },
-    originClient: {
-        timeout: 10000,
+    configuration: {
+        timeout: 60_000,
     },
     logger: console,
 });
@@ -78,15 +78,16 @@ const squareClient: SquareClient = new SquareClient(accessToken, {
 
 ### `originClient` Options
 
-A set of possible settings for the original library. 
+A set of possible settings for the original library.
 
-| Name           | Type      | Default                                                      | Description                                                                                                      |
-| -------------- | --------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| basePath       | `String`  | `https://connect.squareup.com`                               | The base URL against which to resolve every API call's (relative) path.                                          |
-| defaultHeaders | `Array`   | `{ 'User-Agent': 'Square-Connect-Javascript/3.20200226.0' }` | The default HTTP headers to be included for all API calls.                                                       |
-| timeout        | `Number`  | `15000`                                                      | The default HTTP timeout for all API calls.                                                                      |
-| cache          | `Boolean` | `true`                                                       | If set to false an additional timestamp parameter is added to all API GET calls to prevent browser caching.      |
-| enableCookies  | `Boolean` | `false`                                                      | If set to true, the client will save the cookies from each server response, and return them in the next request. |
+| Name              | Type     | Default                        | Description                                                               |
+| ----------------- | -------- | ------------------------------ | ------------------------------------------------------------------------- |
+| customUrl         | `String` | `https://connect.squareup.com` | The custom URL against which to resolve every API call's (relative) path. |
+| additionalHeaders | `Object` | `{}`                           | Record<string, string>                                                    |
+| timeout           | `Number` | `60_000`                       | The default HTTP timeout for all API calls.                               |
+| squareVersion     | `String` | `2021-12-15`                   | The default square api version for all API calls.                         |
+| environment       | `Enum`   | `Environment.Production`       | The default square enviroment for all API calls.                          |
+| accessToken       | `String` | `''`                           | Scoped access token.                                                      |
 
 ### `logger` Option
 

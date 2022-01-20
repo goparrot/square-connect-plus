@@ -1,3 +1,3 @@
-import { ISquareClientDefaultConfig } from './i-square-api-default-config';
+import type { ISquareClientDefaultConfig } from './ISquareClientDefaultConfig';
 
 export interface ISquareClientMergedConfig extends ISquareClientDefaultConfig {}

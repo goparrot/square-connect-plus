@@ -1,3 +1,3 @@
-export * from './square-client';
-export * from './square-client-factory';
+export * from './SquareClient';
+export * from './SquareClientFactory';
 export * from './CustomerClientApi';

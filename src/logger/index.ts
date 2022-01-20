@@ -1,2 +1,2 @@
-export * from './null-logger';
-export * from './i-logger';
+export * from './NullLogger';
+export * from './ILogger';

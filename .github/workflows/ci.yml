@@ -1,6 +1,6 @@
 name: CI
 
-on: ["push", "pull_request"]
+on: [ "push", "pull_request" ]
 
 jobs:
   commitlint:
@@ -16,27 +16,26 @@ jobs:
           fetch-depth: 0
 
       - name: Lints Pull Request commits
-        uses: wagoid/commitlint-github-action@v1
+        uses: wagoid/commitlint-github-action@v2
 
   build:
     runs-on: ubuntu-latest
 
     strategy:
-      fail-fast: false
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [ 14.x, 16.x ]
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v1
+      - name: Git Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 1
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -44,13 +43,19 @@ jobs:
       - run: npm --version
 
       - name: Install npm dependencies
-        run: npm i
+        run: npm install --progress=false --loglevel=warn --ignore-scripts
 
       - name: Lint code
         run: npm run lint
 
-      - name: Run tests
-        run: npm run coverage:all
+      - name: Check publish sdk
+        run: npm run publish:dev:dry
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Run tests and covarage
+        run: npm run coverage:ci
         env:
           SQUARE_BASE_URL: ${{ secrets.SQUARE_BASE_URL }}
           SQUARE_SANDBOX_BASE_URL: ${{ secrets.SQUARE_SANDBOX_BASE_URL }}
@@ -58,6 +63,6 @@ jobs:
 
       - name: Run Coveralls
         uses: coverallsapp/github-action@master
-        if: startsWith(matrix.node-version, '12.')
+        if: startsWith(matrix.node-version, '14.')
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

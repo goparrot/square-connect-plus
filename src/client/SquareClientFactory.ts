@@ -1,5 +1,5 @@
-import { ISquareClientConfig } from '../interface';
-import { SquareClient } from './square-client';
+import type { ISquareClientConfig } from '../interface';
+import { SquareClient } from './SquareClient';
 
 export class SquareClientFactory {
     static create(accessToken: string, config: ISquareClientConfig = {}): SquareClient {

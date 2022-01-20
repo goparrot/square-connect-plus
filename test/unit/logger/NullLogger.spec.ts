@@ -1,19 +1,20 @@
-import { ILogger, NullLogger } from '../../../src/logger';
+import type { ILogger } from '../../../src/logger';
+import { NullLogger } from '../../../src/logger';
 
 describe('NullLogger (unit)', (): void => {
     describe('#constructor', (): void => {
-        it('should be init without args', async (): Promise<any> => {
+        it('should be init without args', async (): Promise<unknown> => {
             return new NullLogger().should.be.instanceOf(NullLogger);
         });
     });
 
     describe('#debug', (): void => {
-        it('should have debug method', async (): Promise<any> => {
+        it('should have debug method', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             return logger.debug.should.be.a('function');
         });
 
-        it('should be ok', async (): Promise<any> => {
+        it('should be ok', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             try {
                 logger.debug('test');
@@ -25,12 +26,12 @@ describe('NullLogger (unit)', (): void => {
     });
 
     describe('#info', (): void => {
-        it('should have debug method', async (): Promise<any> => {
+        it('should have debug method', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             return logger.info.should.be.a('function');
         });
 
-        it('should be ok', async (): Promise<any> => {
+        it('should be ok', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             try {
                 logger.info('test');
@@ -42,12 +43,12 @@ describe('NullLogger (unit)', (): void => {
     });
 
     describe('#warn', (): void => {
-        it('should have warn method', async (): Promise<any> => {
+        it('should have warn method', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             return logger.warn.should.be.a('function');
         });
 
-        it('should be ok', async (): Promise<any> => {
+        it('should be ok', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             try {
                 logger.warn('test');
@@ -59,12 +60,12 @@ describe('NullLogger (unit)', (): void => {
     });
 
     describe('#error', (): void => {
-        it('should have error method', async (): Promise<any> => {
+        it('should have error method', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             return logger.error.should.be.a('function');
         });
 
-        it('should be ok', async (): Promise<any> => {
+        it('should be ok', async (): Promise<unknown> => {
             const logger: ILogger = new NullLogger();
             try {
                 logger.error('test');

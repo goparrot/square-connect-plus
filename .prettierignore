@@ -1,6 +1,11 @@
-.nyc_output
-coverage
+# IDE
+/.idea
+/.vscode
+
+#:build dependencies
 dist
 node_modules
-package-lock.json
-src/test.ts
+.nyc_output
+
+# test
+coverage
