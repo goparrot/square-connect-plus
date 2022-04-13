@@ -18,6 +18,7 @@ import {
     TransactionsApi,
     DEFAULT_CONFIGURATION,
     CardsApi,
+    LoyaltyApi,
 } from 'square';
 import type { ISquareClientConfig } from '../../../src';
 import { SquareClient, exponentialDelay } from '../../../src';
@@ -130,6 +131,12 @@ describe('SquareClient (unit)', (): void => {
     describe('#getCustomersApi', (): void => {
         it('should return CustomersApi', (): void => {
             expect(new SquareClient(accessToken).getCustomersApi()).to.be.instanceOf(CustomersApi);
+        });
+    });
+
+    describe('#getLoyaltyApi', (): void => {
+        it('should return LoyaltyApi', (): void => {
+            expect(new SquareClient(accessToken).getLoyaltyApi()).to.be.instanceOf(LoyaltyApi);
         });
     });
 
