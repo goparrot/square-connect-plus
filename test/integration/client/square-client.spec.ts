@@ -1,7 +1,7 @@
 import type { CalculateOrderResponse, Order, SearchCustomersRequest } from 'square';
-import { Environment, DEFAULT_CONFIGURATION } from 'square';
+import { DEFAULT_CONFIGURATION, Environment } from 'square';
 import type { ISquareClientConfig } from '../../../src';
-import { SquareClient, SquareApiException, recursiveBigIntToNumber, SquareDataMapper } from '../../../src';
+import { recursiveBigIntToNumber, SquareApiException, SquareClient, SquareDataMapper } from '../../../src';
 
 describe('SquareClient (integration)', (): void => {
     const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN || ''}`;
@@ -56,6 +56,15 @@ describe('SquareClient (integration)', (): void => {
                 .getCustomersApi()
                 .searchCustomers(query)
                 .should.eventually.be.rejectedWith(Error, /^`WRONG_VALUE` is not a valid enum value for.*/);
+        });
+    });
+
+    describe('#getLoyaltyApi', (): void => {
+        it('should retrieve loyalty program', async (): Promise<unknown> => {
+            return new SquareClient(accessToken, config)
+                .getLoyaltyApi()
+                .retrieveLoyaltyProgram('main')
+                .should.eventually.be.rejectedWith(Error, /^Merchant does not have a loyalty program/);
         });
     });
 

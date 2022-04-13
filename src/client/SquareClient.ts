@@ -1,21 +1,22 @@
 import type { ApiResponse, Error as SquareError } from 'square';
 import {
     ApplePayApi,
+    CardsApi,
     CatalogApi,
     CheckoutApi,
     Client,
+    DEFAULT_CONFIGURATION,
     EmployeesApi,
     InventoryApi,
     LaborApi,
     LocationsApi,
+    LoyaltyApi,
     MobileAuthorizationApi,
     OAuthApi,
     OrdersApi,
     PaymentsApi,
     RefundsApi,
     TransactionsApi,
-    DEFAULT_CONFIGURATION,
-    CardsApi,
 } from 'square';
 import { v4 as uuidv4 } from 'uuid';
 import { retryableErrorCodes } from '../constants';
@@ -82,6 +83,18 @@ export class SquareClient {
 
     getEmployeesApi(retryableMethods: string[] = ['listEmployees', 'retrieveEmployee']): EmployeesApi {
         return this.proxy(new EmployeesApi(this.getOriginClient()), retryableMethods);
+    }
+
+    getLoyaltyApi(
+        retryableMethods: string[] = [
+            'listLoyaltyPrograms',
+            'searchLoyaltyEvents',
+            'searchLoyaltyAccounts',
+            'retrieveLoyaltyAccount',
+            'retrieveLoyaltyProgram',
+        ],
+    ): LoyaltyApi {
+        return this.proxy(new LoyaltyApi(this.getOriginClient()), retryableMethods);
     }
 
     getInventoryApi(
