@@ -7,11 +7,14 @@ import {
     Client,
     DEFAULT_CONFIGURATION,
     EmployeesApi,
+    GiftCardActivitiesApi,
+    GiftCardsApi,
     InventoryApi,
     InvoicesApi,
     LaborApi,
     LocationsApi,
     LoyaltyApi,
+    MerchantsApi,
     MobileAuthorizationApi,
     OAuthApi,
     OrdersApi,
@@ -130,6 +133,10 @@ export class SquareClient {
         return this.proxy(new LocationsApi(this.getOriginClient()), retryableMethods);
     }
 
+    getMerchantsApi(retryableMethods: string[] = ['retrieveMerchant', 'listMerchants']): MerchantsApi {
+        return this.proxy(new MerchantsApi(this.getOriginClient()), retryableMethods);
+    }
+
     getMobileAuthorizationApi(retryableMethods: string[] = []): MobileAuthorizationApi {
         return this.proxy(new MobileAuthorizationApi(this.getOriginClient()), retryableMethods);
     }
@@ -144,6 +151,24 @@ export class SquareClient {
 
     getPaymentsApi(retryableMethods: string[] = ['getPayment', 'listPayments', 'createPayment', 'cancelPayment']): PaymentsApi {
         return this.proxy(new PaymentsApi(this.getOriginClient()), retryableMethods);
+    }
+
+    getGiftCardsApi(
+        retryableMethods: string[] = [
+            'listGiftCards',
+            'createGiftCard',
+            'retrieveGiftCardFromGAN',
+            'retrieveGiftCardFromNonce',
+            'linkCustomerToGiftCard',
+            'unlinkCustomerFromGiftCard',
+            'retrieveGiftCard',
+        ],
+    ): GiftCardsApi {
+        return this.proxy(new GiftCardsApi(this.getOriginClient()), retryableMethods);
+    }
+
+    getGiftCardActivitiesApi(retryableMethods: string[] = ['listGiftCardActivities', 'createGiftCardActivity']): GiftCardActivitiesApi {
+        return this.proxy(new GiftCardActivitiesApi(this.getOriginClient()), retryableMethods);
     }
 
     getRefundsApi(retryableMethods: string[] = ['getPaymentRefund', 'listPaymentRefunds', 'refundPayment']): RefundsApi {
@@ -211,13 +236,11 @@ export class SquareClient {
         const logger = this.getLogger();
 
         async function retry(): Promise<T> {
-            const requestStartTime = new Date();
-
+            const startedAt = Date.now();
             try {
                 return await promiseFn();
             } catch (error) {
-                // @ts-expect-error
-                const squareException: SquareApiException = new SquareApiException(error, retries, new Date() - requestStartTime);
+                const squareException: SquareApiException = new SquareApiException(error, retries, Date.now() - startedAt);
 
                 if (retryableMethods.includes(apiMethodName) && (await retryCondition(squareException, maxRetries, retries))) {
                     logger.info('Square api retry', {
@@ -236,6 +259,10 @@ export class SquareClient {
                 }
 
                 throw squareException;
+            } finally {
+                const finishedAt = Date.now();
+                const responseTime = finishedAt - startedAt;
+                logger.debug(`Square api request: ${apiMethodName} executed in ${responseTime}ms`, { startedAt, finishedAt, execTime: responseTime });
             }
         }
 
