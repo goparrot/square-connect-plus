@@ -1,5 +1,16 @@
 import { expect } from 'chai';
-import { Client, CustomersApi, LocationsApi, OrdersApi, PaymentsApi, RefundsApi, Environment, DEFAULT_CONFIGURATION } from 'square';
+import {
+    Client,
+    CustomersApi,
+    LocationsApi,
+    OrdersApi,
+    PaymentsApi,
+    RefundsApi,
+    Environment,
+    DEFAULT_CONFIGURATION,
+    GiftCardsApi,
+    GiftCardActivitiesApi,
+} from 'square';
 import type { ISquareClientConfig } from '../../../src';
 import { SquareClient, SquareClientFactory, exponentialDelay } from '../../../src';
 
@@ -114,6 +125,18 @@ describe('SquareClientFactory (unit)', (): void => {
     describe('#getPaymentsApi', (): void => {
         it('should return PaymentsApi', (): void => {
             expect(new SquareClient(accessToken).getPaymentsApi()).to.be.instanceOf(PaymentsApi);
+        });
+    });
+
+    describe('#getGiftCardsApi', (): void => {
+        it('should return GiftCardsApi', (): void => {
+            expect(new SquareClient(accessToken).getGiftCardsApi()).to.be.instanceOf(GiftCardsApi);
+        });
+    });
+
+    describe('#getGiftCardActivitiesApi', (): void => {
+        it('should return GiftCardActivitiesApi', (): void => {
+            expect(new SquareClient(accessToken).getGiftCardActivitiesApi()).to.be.instanceOf(GiftCardActivitiesApi);
         });
     });
 
