@@ -27,6 +27,7 @@ describe('SquareApiException (unit)', (): void => {
             request: {
                 method: 'POST',
                 url: 'https://connect.squareupsandbox.com/v2/customers/search',
+                headers: response.headers,
             },
         },
         '',
@@ -67,12 +68,18 @@ describe('SquareApiException (unit)', (): void => {
             squareException.should.have.property('errors').eql([]);
             squareException.should.have.property('message', 'error message');
         });
+
+        it('should remove authorization property from request headers', () => {
+            const squareException: SquareApiException = new SquareApiException(apiError, 0);
+
+            squareException.should.be.instanceOf(SquareApiException);
+            squareException.apiError?.request.headers?.should.not.have.property('authorization');
+        });
     });
 
     describe('#toObject', (): void => {
         it('should be ok with apiError', () => {
             const squareException: SquareApiException = new SquareApiException(apiError, 0);
-
             const plainObject = squareException.toObject();
 
             plainObject.should.have.property('statusCode', 400);
@@ -87,7 +94,6 @@ describe('SquareApiException (unit)', (): void => {
         it('should be ok with empty data.originError object', (): void => {
             // @ts-ignore
             const squareException: SquareApiException = new SquareApiException({});
-
             const plainObject = squareException.toObject();
 
             plainObject.should.have.property('statusCode', 500);
@@ -110,12 +116,18 @@ describe('SquareApiException (unit)', (): void => {
             plainObject.should.have.property('errors').eql([]);
             plainObject.should.have.property('message', 'error message');
         });
+
+        it("shouldn't have authorization property from request headers", () => {
+            const squareException: SquareApiException = new SquareApiException(apiError, 0);
+            const plainObject = squareException.toObject();
+
+            plainObject.apiError?.request.headers?.should.not.have.property('authorization');
+        });
     });
 
     describe('#toString', (): void => {
         it('should be ok with apiError', () => {
             const squareException: SquareApiException = new SquareApiException(apiError, 0);
-
             const plainObject = squareException.toString();
 
             plainObject.should.deep.equal(JSON.stringify(squareException.toObject()));
@@ -133,7 +145,13 @@ describe('SquareApiException (unit)', (): void => {
             const error = new Error('error message');
             // @ts-ignore
             const squareException: SquareApiException = new SquareApiException(error);
+            const plainObject = squareException.toString();
 
+            plainObject.should.deep.equal(JSON.stringify(squareException.toObject()));
+        });
+
+        it("shouldn't have authorization property from request headers", () => {
+            const squareException: SquareApiException = new SquareApiException(apiError, 0);
             const plainObject = squareException.toString();
 
             plainObject.should.deep.equal(JSON.stringify(squareException.toObject()));
