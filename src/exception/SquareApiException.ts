@@ -24,6 +24,8 @@ export class SquareApiException extends Error implements ISquareApiException {
         }
 
         if (error instanceof ApiError) {
+            delete error.request.headers?.['authorization'];
+
             this.apiError = error;
             this.errors = error.errors ?? this.errors;
             this.message = this.errors[0]?.detail || this.errors[0]?.code || this.message;
