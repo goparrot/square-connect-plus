@@ -54,6 +54,7 @@ export class SquareDataMapper {
         const transformableObject = <T>(value: T): boolean => isObject(value) && !isUntouchable(value);
 
         return Object.fromEntries(
+            // @ts-expect-error
             Object.entries(data).map(([key, value]) => {
                 return Array.isArray(value)
                     ? [transformer(key), convertArray(value)]

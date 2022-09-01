@@ -8,6 +8,7 @@ import {
     DEFAULT_CONFIGURATION,
     EmployeesApi,
     InventoryApi,
+    InvoicesApi,
     LaborApi,
     LocationsApi,
     LoyaltyApi,
@@ -39,7 +40,8 @@ export class SquareClient {
     };
 
     constructor(private readonly accessToken: string, config: ISquareClientConfig = {}) {
-        this.#mergedConfig = mergeDeepProps(this.#defaultConfig, config);
+        const { logger, ...configWithoutLogger } = config;
+        this.#mergedConfig = mergeDeepProps(this.#defaultConfig, configWithoutLogger);
         this.#mergedConfig.logger = config.logger;
     }
 
@@ -156,6 +158,10 @@ export class SquareClient {
         return this.proxy(new CardsApi(this.getOriginClient()), retryableMethods);
     }
 
+    getInvoiceApi(retryableMethods: string[] = ['listInvoices', 'searchInvoices', 'getInvoice']): InvoicesApi {
+        return this.proxy(new InvoicesApi(this.getOriginClient()), retryableMethods);
+    }
+
     private createOriginClient(accessToken: string, { configuration }: Partial<ISquareClientConfig>): Client {
         return new Client({ ...configuration, accessToken });
     }
@@ -202,14 +208,26 @@ export class SquareClient {
     private async makeRetryable<T>(promiseFn: (...arg: unknown[]) => Promise<T>, apiMethodName: string, retryableMethods: string[]): Promise<T> {
         let retries: number = 0;
         const { maxRetries, retryCondition = this.retryCondition } = this.#mergedConfig.retry;
+        const logger = this.getLogger();
 
         async function retry(): Promise<T> {
+            const requestStartTime = new Date();
+
             try {
                 return await promiseFn();
             } catch (error) {
-                const squareException: SquareApiException = new SquareApiException(error, retries);
+                // @ts-expect-error
+                const squareException: SquareApiException = new SquareApiException(error, retries, new Date() - requestStartTime);
 
                 if (retryableMethods.includes(apiMethodName) && (await retryCondition(squareException, maxRetries, retries))) {
+                    logger.info('Square api retry', {
+                        retries,
+                        maxRetries,
+                        apiMethodName,
+                        exception: squareException.toObject(),
+                        responseTime: squareException.responseTime,
+                    });
+
                     retries++;
                     const delay: number = exponentialDelay(retries);
                     await sleep(delay);
