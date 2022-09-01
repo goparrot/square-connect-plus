@@ -9,4 +9,5 @@ export interface ISquareApiException {
     apiError?: ApiError;
     url?: string;
     method?: string;
+    responseTime?: number;
 }

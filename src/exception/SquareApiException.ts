@@ -9,12 +9,17 @@ export class SquareApiException extends Error implements ISquareApiException {
     readonly apiError?: ApiError;
     readonly url?: string;
     readonly method?: string;
+    readonly responseTime?: number;
 
-    constructor(error: unknown, retries: number = 0) {
+    constructor(error: unknown, retries: number = 0, responseTime?: number) {
         super();
         this.message = 'Square API error';
         this.name = this.constructor.name;
         this.retries = retries ?? this.retries;
+
+        if (responseTime) {
+            this.responseTime = responseTime;
+        }
 
         /* If timeout < 800ms square api doesn't throw ApiError, but Error */
         if (error instanceof Error) {
@@ -45,6 +50,7 @@ export class SquareApiException extends Error implements ISquareApiException {
             statusCode: this.statusCode,
             errors: this.errors,
             apiError: this.apiError,
+            responseTime: this.responseTime,
         };
     }
 

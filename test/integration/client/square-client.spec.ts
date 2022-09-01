@@ -1,7 +1,7 @@
 import type { CalculateOrderResponse, Order, SearchCustomersRequest } from 'square';
 import { DEFAULT_CONFIGURATION, Environment } from 'square';
 import type { ISquareClientConfig } from '../../../src';
-import { recursiveBigIntToNumber, SquareApiException, SquareClient, SquareDataMapper } from '../../../src';
+import { NullLogger, recursiveBigIntToNumber, SquareApiException, SquareClient, SquareDataMapper } from '../../../src';
 
 describe('SquareClient (integration)', (): void => {
     const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN || ''}`;
@@ -16,16 +16,16 @@ describe('SquareClient (integration)', (): void => {
             customUrl,
             environment: Environment.Sandbox,
         },
+        logger: new NullLogger(),
     };
 
     describe('#getLocationsApi', (): void => {
         it('should retry by timeout', async (): Promise<unknown> => {
             return new SquareClient(accessToken, {
                 ...config,
-                ...{
-                    configuration: {
-                        timeout: 1,
-                    },
+                configuration: {
+                    ...config.configuration,
+                    timeout: 1,
                 },
             })
                 .getLocationsApi()
