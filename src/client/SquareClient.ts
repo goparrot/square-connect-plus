@@ -206,16 +206,8 @@ export class SquareClient {
                 return async (...args: unknown[]): Promise<ApiResponse<T>> => {
                     const requestFn: (...arg: unknown[]) => Promise<ApiResponse<T>> = target[apiMethodName].bind(target, ...args);
 
-                    this.getLogger().debug(
-                        `Square api request: ${JSON.stringify({ apiMethodName, args }, (_, value) =>
-                            typeof value === 'bigint' ? value.toString() + 'n' : value,
-                        )}`,
-                    );
-
                     try {
-                        const response = await this.makeRetryable<ApiResponse<T>>(requestFn, apiMethodName, retryableMethods);
-
-                        return response;
+                        return await this.makeRetryable<ApiResponse<T>>(api, requestFn, apiMethodName, retryableMethods);
                     } catch (err) {
                         if (err instanceof Error) {
                             err.stack += stackError;
@@ -230,7 +222,7 @@ export class SquareClient {
         return new Proxy<T>(api, handler);
     }
 
-    private async makeRetryable<T>(promiseFn: (...arg: unknown[]) => Promise<T>, apiMethodName: string, retryableMethods: string[]): Promise<T> {
+    private async makeRetryable<T>(api, promiseFn: (...arg: unknown[]) => Promise<T>, apiMethodName: string, retryableMethods: string[]): Promise<T> {
         let retries: number = 0;
         const { maxRetries, retryCondition = this.retryCondition } = this.#mergedConfig.retry;
         const logger = this.getLogger();
@@ -240,15 +232,20 @@ export class SquareClient {
             try {
                 return await promiseFn();
             } catch (error) {
-                const squareException: SquareApiException = new SquareApiException(error, retries, Date.now() - startedAt);
+                const finishedAt = Date.now();
+                const execTime = finishedAt - startedAt;
+                const squareException: SquareApiException = new SquareApiException(error, retries, execTime);
 
                 if (retryableMethods.includes(apiMethodName) && (await retryCondition(squareException, maxRetries, retries))) {
                     logger.info('Square api retry', {
                         retries,
                         maxRetries,
+                        apiName: api.constructor.name,
                         apiMethodName,
+                        startedAt,
+                        finishedAt,
+                        execTime,
                         exception: squareException.toObject(),
-                        responseTime: squareException.responseTime,
                     });
 
                     retries++;
@@ -261,8 +258,14 @@ export class SquareClient {
                 throw squareException;
             } finally {
                 const finishedAt = Date.now();
-                const responseTime = finishedAt - startedAt;
-                logger.debug(`Square api request: ${apiMethodName} executed in ${responseTime}ms`, { startedAt, finishedAt, execTime: responseTime });
+                const execTime = finishedAt - startedAt;
+                logger.info(`Square api request: ${apiMethodName} executed in ${execTime}ms`, {
+                    apiName: api.constructor.name,
+                    apiMethodName,
+                    startedAt,
+                    finishedAt,
+                    execTime,
+                });
             }
         }
 
