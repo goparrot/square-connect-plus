@@ -1,11 +1,11 @@
-import type { ApiResponse, Error as SquareError } from 'square';
-import {
+import capitalize from 'lodash.capitalize';
+import type {
+    ApiResponse,
+    Error as SquareError,
     ApplePayApi,
     CardsApi,
     CatalogApi,
     CheckoutApi,
-    Client,
-    DEFAULT_CONFIGURATION,
     EmployeesApi,
     GiftCardActivitiesApi,
     GiftCardsApi,
@@ -22,7 +22,9 @@ import {
     RefundsApi,
     TransactionsApi,
 } from 'square';
+import { Client, DEFAULT_CONFIGURATION } from 'square';
 import { v4 as uuidv4 } from 'uuid';
+import type { BaseApi } from 'square/dist/api/baseApi';
 import { retryableErrorCodes } from '../constants';
 import { SquareApiException } from '../exception';
 import type { ISquareClientConfig, ISquareClientDefaultConfig, ISquareClientMergedConfig } from '../interface';
@@ -30,6 +32,10 @@ import type { ILogger } from '../logger';
 import { NullLogger } from '../logger';
 import { exponentialDelay, mergeDeepProps, sleep } from '../utils';
 import { CustomerClientApi } from './CustomerClientApi';
+
+type ApiName = {
+    [key in keyof Client]: Client[key] extends BaseApi ? key : never;
+}[keyof Client];
 
 export class SquareClient {
     #client: Client;
@@ -69,25 +75,25 @@ export class SquareClient {
     }
 
     getApplePayApi(retryableMethods: string[] = []): ApplePayApi {
-        return this.proxy(new ApplePayApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('applePayApi', retryableMethods);
     }
 
     getCatalogApi(
         retryableMethods: string[] = ['batchRetrieveCatalogObjects', 'catalogInfo', 'listCatalog', 'retrieveCatalogObject', 'searchCatalogObjects'],
     ): CatalogApi {
-        return this.proxy(new CatalogApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('catalogApi', retryableMethods);
     }
 
     getCheckoutApi(retryableMethods: string[] = []): CheckoutApi {
-        return this.proxy(new CheckoutApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('checkoutApi', retryableMethods);
     }
 
     getCustomersApi(retryableMethods: string[] = ['listCustomers', 'retrieveCustomer', 'searchCustomers', 'deleteCustomerCard']): CustomerClientApi {
-        return this.proxy(new CustomerClientApi(this.getOriginClient()), retryableMethods);
+        return this.proxyWithInstance('customersApi', new CustomerClientApi(this.getOriginClient()), retryableMethods);
     }
 
     getEmployeesApi(retryableMethods: string[] = ['listEmployees', 'retrieveEmployee']): EmployeesApi {
-        return this.proxy(new EmployeesApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('employeesApi', retryableMethods);
     }
 
     getLoyaltyApi(
@@ -99,7 +105,7 @@ export class SquareClient {
             'retrieveLoyaltyProgram',
         ],
     ): LoyaltyApi {
-        return this.proxy(new LoyaltyApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('loyaltyApi', retryableMethods);
     }
 
     getInventoryApi(
@@ -112,7 +118,7 @@ export class SquareClient {
             'retrieveInventoryPhysicalCount',
         ],
     ): InventoryApi {
-        return this.proxy(new InventoryApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('inventoryApi', retryableMethods);
     }
 
     getLaborApi(
@@ -126,31 +132,31 @@ export class SquareClient {
             'searchShifts',
         ],
     ): LaborApi {
-        return this.proxy(new LaborApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('laborApi', retryableMethods);
     }
 
     getLocationsApi(retryableMethods: string[] = ['listLocations']): LocationsApi {
-        return this.proxy(new LocationsApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('locationsApi', retryableMethods);
     }
 
     getMerchantsApi(retryableMethods: string[] = ['retrieveMerchant', 'listMerchants']): MerchantsApi {
-        return this.proxy(new MerchantsApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('merchantsApi', retryableMethods);
     }
 
     getMobileAuthorizationApi(retryableMethods: string[] = []): MobileAuthorizationApi {
-        return this.proxy(new MobileAuthorizationApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('mobileAuthorizationApi', retryableMethods);
     }
 
     getOAuthApi(retryableMethods: string[] = []): OAuthApi {
-        return this.proxy(new OAuthApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('oAuthApi', retryableMethods);
     }
 
     getOrdersApi(retryableMethods: string[] = ['batchRetrieveOrders', 'searchOrders', 'createOrder', 'payOrder', 'calculateOrder']): OrdersApi {
-        return this.proxy(new OrdersApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('ordersApi', retryableMethods);
     }
 
     getPaymentsApi(retryableMethods: string[] = ['getPayment', 'listPayments', 'createPayment', 'cancelPayment']): PaymentsApi {
-        return this.proxy(new PaymentsApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('paymentsApi', retryableMethods);
     }
 
     getGiftCardsApi(
@@ -164,27 +170,27 @@ export class SquareClient {
             'retrieveGiftCard',
         ],
     ): GiftCardsApi {
-        return this.proxy(new GiftCardsApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('giftCardsApi', retryableMethods);
     }
 
     getGiftCardActivitiesApi(retryableMethods: string[] = ['listGiftCardActivities', 'createGiftCardActivity']): GiftCardActivitiesApi {
-        return this.proxy(new GiftCardActivitiesApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('giftCardActivitiesApi', retryableMethods);
     }
 
     getRefundsApi(retryableMethods: string[] = ['getPaymentRefund', 'listPaymentRefunds', 'refundPayment']): RefundsApi {
-        return this.proxy(new RefundsApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('refundsApi', retryableMethods);
     }
 
     getTransactionsApi(retryableMethods: string[] = ['listRefunds', 'listTransactions', 'retrieveTransaction']): TransactionsApi {
-        return this.proxy(new TransactionsApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('transactionsApi', retryableMethods);
     }
 
     getCardsApi(retryableMethods: string[] = ['listCards', 'retrieveCard', 'disableCard']): CardsApi {
-        return this.proxy(new CardsApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('cardsApi', retryableMethods);
     }
 
     getInvoiceApi(retryableMethods: string[] = ['listInvoices', 'searchInvoices', 'getInvoice']): InvoicesApi {
-        return this.proxy(new InvoicesApi(this.getOriginClient()), retryableMethods);
+        return this.proxy('invoicesApi', retryableMethods);
     }
 
     private createOriginClient(accessToken: string, { configuration }: Partial<ISquareClientConfig>): Client {
@@ -198,16 +204,16 @@ export class SquareClient {
     /**
      * @throws SquareApiException
      */
-    private proxy<T extends object>(api: T, retryableMethods: string[]): T {
+    private proxyWithInstance<T extends ApiName, A extends Client[T]>(apiName: T, api: A, retryableMethods: string[]): A {
         const stackError: string = new Error().stack?.slice(6) || '';
 
-        const handler: ProxyHandler<T> = {
-            get: (target: T, apiMethodName: string): unknown => {
+        const handler: ProxyHandler<A> = {
+            get: (target: A, apiMethodName: string): unknown => {
                 return async (...args: unknown[]): Promise<ApiResponse<T>> => {
                     const requestFn: (...arg: unknown[]) => Promise<ApiResponse<T>> = target[apiMethodName].bind(target, ...args);
 
                     try {
-                        return await this.makeRetryable<ApiResponse<T>>(api, requestFn, apiMethodName, retryableMethods);
+                        return await this.makeRetryable<ApiResponse<T>>(apiName, requestFn, apiMethodName, retryableMethods);
                     } catch (err) {
                         if (err instanceof Error) {
                             err.stack += stackError;
@@ -219,10 +225,24 @@ export class SquareClient {
             },
         };
 
-        return new Proxy<T>(api, handler);
+        return new Proxy<A>(api, handler);
     }
 
-    private async makeRetryable<T>(api, promiseFn: (...arg: unknown[]) => Promise<T>, apiMethodName: string, retryableMethods: string[]): Promise<T> {
+    /**
+     * @throws SquareApiException
+     */
+    private proxy<T extends ApiName>(apiName: T, retryableMethods: string[]): Client[T] {
+        const api = this.getOriginClient()[apiName];
+
+        return this.proxyWithInstance(apiName, api, retryableMethods);
+    }
+
+    private async makeRetryable<T>(
+        apiName: ApiName,
+        promiseFn: (...arg: unknown[]) => Promise<T>,
+        apiMethodName: string,
+        retryableMethods: string[],
+    ): Promise<T> {
         let retries: number = 0;
         const { maxRetries, retryCondition = this.retryCondition } = this.#mergedConfig.retry;
         const logger = this.getLogger();
@@ -240,7 +260,7 @@ export class SquareClient {
                     logger.info('Square api retry', {
                         retries,
                         maxRetries,
-                        apiName: api.constructor.name,
+                        apiName: capitalize(apiName),
                         apiMethodName,
                         startedAt,
                         finishedAt,
@@ -260,7 +280,7 @@ export class SquareClient {
                 const finishedAt = Date.now();
                 const execTime = finishedAt - startedAt;
                 logger.info(`Square api request: ${apiMethodName} executed in ${execTime}ms`, {
-                    apiName: api.constructor.name,
+                    apiName: capitalize(apiName),
                     apiMethodName,
                     startedAt,
                     finishedAt,
