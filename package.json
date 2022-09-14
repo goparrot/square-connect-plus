@@ -1,7 +1,7 @@
 {
     "name": "@goparrot/square-connect-plus",
     "description": "Extends the official Square Node.js SDK library with additional functionality",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "author": "Coroliov Oleg",
     "license": "MIT",
     "private": false,
@@ -79,6 +79,7 @@
         "@types/chai": "^4.3.0",
         "@types/chai-as-promised": "^7.1.5",
         "@types/lodash.camelcase": "^4.3.6",
+        "@types/lodash.capitalize": "^4.2.7",
         "@types/lodash.snakecase": "^4.1.6",
         "@types/mocha": "^9.1.0",
         "@types/node": "^16.11.24",
@@ -113,5 +114,8 @@
         "ts-node": "^10.5.0",
         "typescript": "^4.5.5",
         "uuid": "^8.3.2"
+    },
+    "dependencies": {
+        "lodash.capitalize": "^4.2.1"
     }
 }
