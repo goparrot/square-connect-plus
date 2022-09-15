@@ -46,12 +46,15 @@ export class SquareClient {
             retryDelay: exponentialDelay,
         },
         configuration: DEFAULT_CONFIGURATION,
+        logContext: {
+            merchantId: 'unknown',
+        },
     };
 
     constructor(private readonly accessToken: string, config: ISquareClientConfig = {}) {
         const { logger, ...configWithoutLogger } = config;
         this.#mergedConfig = mergeDeepProps(this.#defaultConfig, configWithoutLogger);
-        this.#mergedConfig.logger = config.logger;
+        this.#mergedConfig.logger = logger;
     }
 
     /**
@@ -245,6 +248,7 @@ export class SquareClient {
     ): Promise<T> {
         let retries: number = 0;
         const { maxRetries, retryCondition = this.retryCondition } = this.#mergedConfig.retry;
+        const { logContext } = this.#mergedConfig;
         const logger = this.getLogger();
 
         async function retry(): Promise<T> {
@@ -258,6 +262,7 @@ export class SquareClient {
 
                 if (retryableMethods.includes(apiMethodName) && (await retryCondition(squareException, maxRetries, retries))) {
                     logger.info('Square api retry', {
+                        ...logContext,
                         retries,
                         maxRetries,
                         apiName: capitalize(apiName),
@@ -280,6 +285,7 @@ export class SquareClient {
                 const finishedAt = Date.now();
                 const execTime = finishedAt - startedAt;
                 logger.info(`Square api request: ${apiMethodName} executed in ${execTime}ms`, {
+                    ...logContext,
                     apiName: capitalize(apiName),
                     apiMethodName,
                     startedAt,
