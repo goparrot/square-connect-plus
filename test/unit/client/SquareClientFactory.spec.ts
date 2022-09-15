@@ -30,6 +30,10 @@ describe('SquareClientFactory (unit)', (): void => {
             environment: Environment.Sandbox,
         },
         logger: console,
+        logContext: {
+            someKey: 'someValue',
+            merchantId: 'unknown',
+        },
     };
 
     describe('#create', (): void => {
@@ -67,6 +71,9 @@ describe('SquareClientFactory (unit)', (): void => {
                 },
                 configuration: DEFAULT_CONFIGURATION,
                 logger: undefined,
+                logContext: {
+                    merchantId: 'unknown',
+                },
             });
         });
 

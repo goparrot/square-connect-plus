@@ -1,7 +1,7 @@
 {
     "name": "@goparrot/square-connect-plus",
     "description": "Extends the official Square Node.js SDK library with additional functionality",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "author": "Coroliov Oleg",
     "license": "MIT",
     "private": false,
