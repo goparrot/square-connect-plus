@@ -1,4 +1,4 @@
-import capitalize from 'lodash.capitalize';
+import upperFirst from 'lodash.upperfirst';
 import type {
     ApiResponse,
     Error as SquareError,
@@ -265,7 +265,7 @@ export class SquareClient {
                         ...logContext,
                         retries,
                         maxRetries,
-                        apiName: capitalize(apiName),
+                        apiName: upperFirst(apiName),
                         apiMethodName,
                         startedAt,
                         finishedAt,
@@ -286,7 +286,7 @@ export class SquareClient {
                 const execTime = finishedAt - startedAt;
                 logger.info(`Square api request: ${apiMethodName} executed in ${execTime}ms`, {
                     ...logContext,
-                    apiName: capitalize(apiName),
+                    apiName: upperFirst(apiName),
                     apiMethodName,
                     startedAt,
                     finishedAt,
