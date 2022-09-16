@@ -260,18 +260,24 @@ export class SquareClient {
                 const execTime = finishedAt - startedAt;
                 const squareException: SquareApiException = new SquareApiException(error, retries, execTime);
 
+                const logMeta = {
+                    ...logContext,
+                    apiName: upperFirst(apiName),
+                    apiMethodName,
+                    startedAt,
+                    finishedAt,
+                    execTime,
+                    retries,
+                    maxRetries,
+                    exception: squareException.toObject(),
+                };
+
+                if ([429].includes(squareException.statusCode) || squareException.statusCode >= 500) {
+                    logger.warn('Square api error', logMeta);
+                }
+
                 if (retryableMethods.includes(apiMethodName) && (await retryCondition(squareException, maxRetries, retries))) {
-                    logger.info('Square api retry', {
-                        ...logContext,
-                        retries,
-                        maxRetries,
-                        apiName: upperFirst(apiName),
-                        apiMethodName,
-                        startedAt,
-                        finishedAt,
-                        execTime,
-                        exception: squareException.toObject(),
-                    });
+                    logger.info('Square api retry', logMeta);
 
                     retries++;
                     const delay: number = exponentialDelay(retries);
