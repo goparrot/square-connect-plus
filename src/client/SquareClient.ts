@@ -150,7 +150,7 @@ export class SquareClient {
         return this.proxy('mobileAuthorizationApi', retryableMethods);
     }
 
-    getOAuthApi(retryableMethods: string[] = []): OAuthApi {
+    getOAuthApi(retryableMethods: string[] = ['obtainToken']): OAuthApi {
         return this.proxy('oAuthApi', retryableMethods);
     }
 
