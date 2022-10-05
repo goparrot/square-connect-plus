@@ -1,31 +1,32 @@
 import { expect } from 'chai';
 import {
-    Client,
-    Environment,
     ApplePayApi,
+    CardsApi,
     CatalogApi,
     CheckoutApi,
+    Client,
     CustomersApi,
+    DEFAULT_CONFIGURATION,
     EmployeesApi,
+    Environment,
+    GiftCardActivitiesApi,
+    GiftCardsApi,
     InventoryApi,
+    InvoicesApi,
     LaborApi,
     LocationsApi,
+    LoyaltyApi,
+    MerchantsApi,
     MobileAuthorizationApi,
     OAuthApi,
     OrdersApi,
     PaymentsApi,
     RefundsApi,
     TransactionsApi,
-    DEFAULT_CONFIGURATION,
-    CardsApi,
-    LoyaltyApi,
-    InvoicesApi,
-    GiftCardsApi,
-    GiftCardActivitiesApi,
 } from 'square';
 import { describe } from 'mocha';
 import type { ISquareClientConfig } from '../../../src';
-import { SquareClient, exponentialDelay } from '../../../src';
+import { exponentialDelay, SquareClient } from '../../../src';
 
 describe('SquareClient (unit)', (): void => {
     const accessToken: string = 'test';
@@ -172,6 +173,12 @@ describe('SquareClient (unit)', (): void => {
     describe('#getLocationsApi', (): void => {
         it('should return LocationsApi', (): void => {
             expect(new SquareClient(accessToken).getLocationsApi()).to.be.instanceOf(LocationsApi);
+        });
+    });
+
+    describe('#getLocationsApi', (): void => {
+        it('should return MerchantsApi', (): void => {
+            expect(new SquareClient(accessToken).getMerchantsApi()).to.be.instanceOf(MerchantsApi);
         });
     });
 
