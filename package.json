@@ -1,10 +1,14 @@
 {
     "name": "@goparrot/square-connect-plus",
-    "description": "Extends the official Square Node.js SDK library with additional functionality",
-    "version": "1.6.1",
-    "author": "Coroliov Oleg",
-    "license": "MIT",
+    "version": "1.7.0",
     "private": false,
+    "description": "Extends the official Square Node.js SDK library with additional functionality",
+    "keywords": [
+        "node",
+        "typescript",
+        "square",
+        "retry"
+    ],
     "bugs": {
         "url": "https://github.com/goparrot/square-connect-plus/issues"
     },
@@ -12,29 +16,9 @@
         "type": "git",
         "url": "https://github.com/goparrot/square-connect-plus.git"
     },
-    "keywords": [
-        "node",
-        "typescript",
-        "square",
-        "retry"
-    ],
-    "engines": {
-        "node": ">=14"
-    },
+    "license": "MIT",
+    "author": "Coroliov Oleg",
     "main": "src/index.ts",
-    "lint-staged": {
-        "*.{ts,tsx,js,json}": [
-            "npm run format:base"
-        ],
-        "*.md": [
-            "npm run prettier:base"
-        ]
-    },
-    "config": {
-        "commitizen": {
-            "path": "cz-conventional-changelog"
-        }
-    },
     "scripts": {
         "commit": "git-cz",
         "prepare": "husky install",
@@ -66,11 +50,21 @@
         "release:dry": "npm run publish:dev:dry && standard-version --dry-run",
         "github-release": "env-cmd conventional-github-releaser -p angular"
     },
-    "peerDependencies": {
-        "lodash.camelcase": "^4.3.0",
-        "lodash.snakecase": "^4.1.1",
-        "square": ">=21.1.0",
-        "uuid": "^8.3.2"
+    "lint-staged": {
+        "*.{ts,tsx,js,json}": [
+            "npm run format:base"
+        ],
+        "*.md": [
+            "npm run prettier:base"
+        ]
+    },
+    "config": {
+        "commitizen": {
+            "path": "cz-conventional-changelog"
+        }
+    },
+    "dependencies": {
+        "lodash.upperfirst": "^4.3.1"
     },
     "devDependencies": {
         "@commitlint/cli": "^16.2.1",
@@ -116,7 +110,13 @@
         "utility-types": "^3.10.0",
         "uuid": "^8.3.2"
     },
-    "dependencies": {
-        "lodash.upperfirst": "^4.3.1"
+    "peerDependencies": {
+        "lodash.camelcase": "^4.3.0",
+        "lodash.snakecase": "^4.1.1",
+        "square": ">=21.1.0",
+        "uuid": "^8.3.2"
+    },
+    "engines": {
+        "node": ">=14"
     }
 }
