@@ -54,6 +54,28 @@ describe('SquareClientFactory (unit)', (): void => {
         });
     });
 
+    describe('#createCustomSquareClient', () => {
+        it('should be statically init with Test class instance and accessToken (default config)', (): void => {
+            class Test extends SquareClient {}
+            SquareClientFactory.createCustomSquareClient(Test, accessToken).should.be.instanceOf(Test);
+        });
+
+        it('should be init with Test class instance and accessToken only (default config)', (): void => {
+            class Test extends SquareClient {}
+            new SquareClientFactory().createCustomSquareClient(Test, accessToken).should.be.instanceOf(Test);
+        });
+
+        it('should be statically init with with Test class instance and accessToken and config', (): void => {
+            class Test extends SquareClient {}
+            SquareClientFactory.createCustomSquareClient(Test, accessToken, config).should.be.instanceOf(Test);
+        });
+
+        it('should be init with with with Test class instance and accessToken and config', (): void => {
+            class Test extends SquareClient {}
+            new SquareClientFactory().createCustomSquareClient(Test, accessToken, config).should.be.instanceOf(Test);
+        });
+    });
+
     describe('#generateIdempotencyKey', (): void => {
         it('should return string', (): void => {
             SquareClient.generateIdempotencyKey()

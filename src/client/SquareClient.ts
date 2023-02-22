@@ -6,7 +6,6 @@ import type {
     CatalogApi,
     CheckoutApi,
     EmployeesApi,
-    Error as SquareError,
     GiftCardActivitiesApi,
     GiftCardsApi,
     InventoryApi,
@@ -24,14 +23,13 @@ import type {
 } from 'square';
 import { Client, DEFAULT_CONFIGURATION } from 'square';
 import { v4 as uuidv4 } from 'uuid';
-import type { BaseApi } from 'square/dist/api/baseApi';
 import type { FunctionKeys } from 'utility-types';
-import { retryableErrorCodes } from '../constants';
+import type { BaseApi } from 'square/dist/api/baseApi';
 import { SquareApiException } from '../exception';
 import type { ISquareClientConfig, ISquareClientDefaultConfig, ISquareClientMergedConfig } from '../interface';
 import type { ILogger } from '../logger';
 import { NullLogger } from '../logger';
-import { exponentialDelay, mergeDeepProps, sleep } from '../utils';
+import { exponentialDelay, isRetryableSquareApiException, mergeDeepProps, sleep } from '../utils';
 import { CustomerClientApi } from './CustomerClientApi';
 
 type ApiName = {
@@ -247,7 +245,7 @@ export class SquareClient {
     /**
      * @throws SquareApiException
      */
-    private proxy<T extends ApiName>(apiName: T, retryableMethods: FunctionKeys<Client[T]>[]): Client[T] {
+    protected proxy<T extends ApiName>(apiName: T, retryableMethods: FunctionKeys<Client[T]>[]): Client[T] {
         const api = this.getOriginClient()[apiName];
 
         return this.proxyWithInstance(apiName, api, retryableMethods);
@@ -317,23 +315,12 @@ export class SquareClient {
         return retry();
     }
 
-    private isRetryableException(error: SquareApiException): boolean {
-        const squareError: SquareError | undefined = error.errors?.[0];
-        const isRetryableResponseStatusCode =
-            [408, 429].includes(error.statusCode) || (error.statusCode >= 500 && error.statusCode <= 599 && error.statusCode !== 501);
-        if (squareError) {
-            return retryableErrorCodes.includes(squareError.code);
-        }
-
-        return isRetryableResponseStatusCode;
-    }
-
     private retryCondition: (error: SquareApiException, maxRetries: number, retries: number) => Promise<boolean> = async (
         error: SquareApiException,
         maxRetries: number,
         retries: number,
     ) => {
-        if (this.isRetryableException(error) && maxRetries > retries) {
+        if (isRetryableSquareApiException(error) && maxRetries > retries) {
             return true;
         }
 

@@ -63,7 +63,7 @@ describe('SquareClient (integration)', (): void => {
         it('should retrieve loyalty program', async (): Promise<unknown> => {
             return new SquareClient(accessToken, config)
                 .getLoyaltyApi()
-                .retrieveLoyaltyProgram('main')
+                .retrieveLoyaltyProgram('main_not_found')
                 .should.eventually.be.rejectedWith(Error, /^Merchant does not have a loyalty program/);
         });
     });
