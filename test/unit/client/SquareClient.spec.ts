@@ -22,6 +22,7 @@ import {
     OrdersApi,
     PaymentsApi,
     RefundsApi,
+    TeamApi,
     TransactionsApi,
 } from 'square';
 import { describe } from 'mocha';
@@ -236,9 +237,15 @@ describe('SquareClient (unit)', (): void => {
         });
     });
 
-    describe('getInvoiceApi', (): void => {
+    describe('#getInvoiceApi', (): void => {
         it('should return getInvoiceApi', (): void => {
             expect(new SquareClient(accessToken).getInvoiceApi()).to.be.instanceOf(InvoicesApi);
+        });
+    });
+
+    describe('#getTeamApi', (): void => {
+        it('should return getTeamApi', (): void => {
+            expect(new SquareClient(accessToken).getTeamApi()).to.be.instanceOf(TeamApi);
         });
     });
 });
