@@ -19,6 +19,7 @@ import type {
     OrdersApi,
     PaymentsApi,
     RefundsApi,
+    TeamApi,
     TransactionsApi,
 } from 'square';
 import { Client, DEFAULT_CONFIGURATION } from 'square';
@@ -205,6 +206,21 @@ export class SquareClient {
 
     getInvoiceApi(retryableMethods: FunctionKeys<InvoicesApi>[] = ['listInvoices', 'searchInvoices', 'getInvoice']): InvoicesApi {
         return this.proxy('invoicesApi', retryableMethods);
+    }
+
+    getTeamApi(
+        retryableMethods: FunctionKeys<TeamApi>[] = [
+            'createTeamMember',
+            'bulkCreateTeamMembers',
+            'bulkUpdateTeamMembers',
+            'searchTeamMembers',
+            'retrieveTeamMember',
+            'updateTeamMember',
+            'retrieveWageSetting',
+            'updateWageSetting',
+        ],
+    ): TeamApi {
+        return this.proxy('teamApi', retryableMethods);
     }
 
     private createOriginClient(accessToken: string, { configuration }: Partial<ISquareClientConfig>): Client {
