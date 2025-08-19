@@ -1,7 +1,7 @@
-import type { CalculateOrderResponse, Order, SearchCustomersRequest } from 'square';
-import { DEFAULT_CONFIGURATION, Environment } from 'square';
+import type { CalculateOrderResponse, Order, SearchCustomersRequest } from 'square/legacy';
+import { DEFAULT_CONFIGURATION, Environment } from 'square/legacy';
 import type { ISquareClientConfig } from '../../../src';
-import { NullLogger, recursiveBigIntToNumber, SquareApiException, SquareClient, SquareDataMapper } from '../../../src';
+import { LegacySquareClient, NullLogger, recursiveBigIntToNumber, SquareApiException, SquareDataMapper } from '../../../src';
 
 describe('SquareClient (integration)', (): void => {
     const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN || ''}`;
@@ -21,7 +21,7 @@ describe('SquareClient (integration)', (): void => {
 
     describe('#getLocationsApi', (): void => {
         it('should retry by timeout', async (): Promise<unknown> => {
-            return new SquareClient(accessToken, {
+            return new LegacySquareClient(accessToken, {
                 ...config,
                 configuration: {
                     ...config.configuration,
@@ -34,7 +34,7 @@ describe('SquareClient (integration)', (): void => {
         });
 
         it('should retrieve data', async (): Promise<unknown> => {
-            return new SquareClient(accessToken, config)
+            return new LegacySquareClient(accessToken, config)
                 .getLocationsApi()
                 .listLocations()
                 .should.eventually.be.fulfilled.and.have.property('result')
@@ -52,7 +52,7 @@ describe('SquareClient (integration)', (): void => {
                     },
                 },
             });
-            return new SquareClient(accessToken, config)
+            return new LegacySquareClient(accessToken, config)
                 .getCustomersApi()
                 .searchCustomers(query)
                 .should.eventually.be.rejectedWith(Error, /^`WRONG_VALUE` is not a valid enum value for.*/);
@@ -61,7 +61,7 @@ describe('SquareClient (integration)', (): void => {
 
     describe('#getLoyaltyApi', (): void => {
         it('should retrieve loyalty program', async (): Promise<unknown> => {
-            return new SquareClient(accessToken, config)
+            return new LegacySquareClient(accessToken, config)
                 .getLoyaltyApi()
                 .retrieveLoyaltyProgram('main_not_found')
                 .should.eventually.be.rejectedWith(Error, /^Merchant does not have a loyalty program/);
@@ -70,7 +70,7 @@ describe('SquareClient (integration)', (): void => {
 
     describe('#getOrdersApi', (): void => {
         it('should calculate order total', async (): Promise<void> => {
-            const apiClient: SquareClient = new SquareClient(accessToken, { configuration: { ...config.configuration, timeout: 60_000 } });
+            const apiClient: LegacySquareClient = new LegacySquareClient(accessToken, { configuration: { ...config.configuration, timeout: 60_000 } });
             const { locations } = (await apiClient.getLocationsApi().listLocations()).result;
 
             if (!locations?.length) {

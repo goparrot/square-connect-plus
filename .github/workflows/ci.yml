@@ -11,33 +11,31 @@ jobs:
 
     steps:
       - name: Clone repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Lints Pull Request commits
-        uses: wagoid/commitlint-github-action@v2
+        uses: wagoid/commitlint-github-action@v6
 
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [ 14.x, 16.x ]
-
     env:
+      HUSKY: 0
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Git Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version-file: ".nvmrc"
+          registry-url: "https://registry.npmjs.org"
 
       - run: node --version
       - run: npm --version
@@ -60,9 +58,3 @@ jobs:
           SQUARE_BASE_URL: ${{ secrets.SQUARE_BASE_URL }}
           SQUARE_SANDBOX_BASE_URL: ${{ secrets.SQUARE_SANDBOX_BASE_URL }}
           SQUARE_ACCESS_TOKEN: ${{ secrets.SQUARE_ACCESS_TOKEN }}
-
-      - name: Run Coveralls
-        uses: coverallsapp/github-action@master
-        if: startsWith(matrix.node-version, '14.')
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}

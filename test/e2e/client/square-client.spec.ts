@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import nock, { cleanAll } from 'nock';
-import { DEFAULT_CONFIGURATION, Environment } from 'square';
+import { DEFAULT_CONFIGURATION, Environment } from 'square/legacy';
 import type { ISquareClientConfig } from '../../../src';
-import { SquareClient, SquareApiException, exponentialDelay } from '../../../src';
+import { exponentialDelay, LegacySquareClient, SquareApiException } from '../../../src';
 
 describe('SquareClient (e2e)', (): void => {
     const accessToken: string = 'test';
@@ -28,7 +28,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should NOT retry 501 http status', async (): Promise<unknown> => {
         nock(customUrl).get(/.*/).times(1000).reply(501);
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getLocationsApi()
             .listLocations()
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -38,7 +38,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should NOT retry 400 http status', async (): Promise<unknown> => {
         nock(customUrl).get(/.*/).times(1000).reply(400);
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getLocationsApi()
             .listLocations()
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -59,7 +59,7 @@ describe('SquareClient (e2e)', (): void => {
                 ],
             });
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getLocationsApi()
             .listLocations()
             .should.eventually.be.rejectedWith(SquareApiException, 'fake 429 error')
@@ -69,7 +69,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should retry 500 http status', async (): Promise<unknown> => {
         nock(customUrl).get(/.*/).times(1000).reply(500);
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getLocationsApi()
             .listLocations()
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -79,7 +79,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should retry 503 http status', async (): Promise<unknown> => {
         nock(customUrl).get(/.*/).times(1000).reply(503);
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getLocationsApi()
             .listLocations()
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -95,7 +95,7 @@ describe('SquareClient (e2e)', (): void => {
             })
             .reply(200, 'OK');
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getLocationsApi()
             .listLocations()
             .should.eventually.be.rejectedWith(SquareApiException, 'timeout of 100ms exceeded')
@@ -105,7 +105,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should retry 500 http method POST', async (): Promise<unknown> => {
         nock(customUrl).post(/.*/).times(1000).reply(503);
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getCustomersApi()
             .searchCustomers({})
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -115,7 +115,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should NOT retry 400 http method POST', async (): Promise<unknown> => {
         nock(customUrl).post(/.*/).times(1000).reply(400);
 
-        return new SquareClient(accessToken, config)
+        return new LegacySquareClient(accessToken, config)
             .getCustomersApi()
             .searchCustomers({})
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -125,7 +125,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should NOT retry if in retry config maxRetries is equal with zero', async (): Promise<unknown> => {
         nock(customUrl).post(/.*/).times(1000).reply(400);
 
-        return new SquareClient(accessToken, { ...config, retry: { maxRetries: 0 } })
+        return new LegacySquareClient(accessToken, { ...config, retry: { maxRetries: 0 } })
             .getCustomersApi()
             .searchCustomers({})
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -134,7 +134,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should NOT retry if in retry config retryCondition \n return false', async (): Promise<unknown> => {
         nock(customUrl).post(/.*/).times(1000).reply(400);
 
-        return new SquareClient(accessToken, { ...config, retry: { maxRetries: 0, retryCondition: async (): Promise<boolean> => false } })
+        return new LegacySquareClient(accessToken, { ...config, retry: { maxRetries: 0, retryCondition: async (): Promise<boolean> => false } })
             .getCustomersApi()
             .searchCustomers({})
             .should.eventually.be.rejectedWith(SquareApiException)
@@ -144,7 +144,7 @@ describe('SquareClient (e2e)', (): void => {
     it('should NOT retry 200', async (): Promise<unknown> => {
         nock(customUrl).post(/.*/, {}).times(DEFAULT_CONFIGURATION.timeout).reply(200, { id: 123 });
 
-        return new SquareClient(accessToken, { ...config, configuration: { ...config.configuration, timeout: DEFAULT_CONFIGURATION.timeout } })
+        return new LegacySquareClient(accessToken, { ...config, configuration: { ...config.configuration, timeout: DEFAULT_CONFIGURATION.timeout } })
             .getCustomersApi()
             .searchCustomers({})
             .then((response) => {

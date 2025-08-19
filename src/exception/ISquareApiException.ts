@@ -1,4 +1,4 @@
-import type { ApiError, Error } from 'square';
+import type { ApiError, Error } from 'square/legacy';
 
 export interface ISquareApiException {
     retries: number;

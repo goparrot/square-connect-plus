@@ -21,11 +21,10 @@ import type {
     RefundsApi,
     TeamApi,
     TransactionsApi,
-} from 'square';
-import { Client, DEFAULT_CONFIGURATION } from 'square';
+} from 'square/legacy';
+import { Client, DEFAULT_CONFIGURATION } from 'square/legacy';
+import type { $Keys, FunctionKeys } from 'utility-types';
 import { v4 as uuidv4 } from 'uuid';
-import type { FunctionKeys } from 'utility-types';
-import type { BaseApi } from 'square/dist/api/baseApi';
 import { SquareApiException } from '../exception';
 import type { ISquareClientConfig, ISquareClientDefaultConfig, ISquareClientMergedConfig } from '../interface';
 import type { ILogger } from '../logger';
@@ -33,11 +32,9 @@ import { NullLogger } from '../logger';
 import { exponentialDelay, isRetryableSquareApiException, mergeDeepProps, sleep } from '../utils';
 import { CustomerClientApi } from './CustomerClientApi';
 
-type ApiName = {
-    [key in keyof Client]: Client[key] extends BaseApi ? key : never;
-}[keyof Client];
+type ApiName = Extract<$Keys<Client>, `${string}Api`>;
 
-export class SquareClient {
+export class LegacySquareClient {
     #client: Client;
     readonly #mergedConfig: ISquareClientMergedConfig;
     readonly #defaultConfig: ISquareClientDefaultConfig = {
@@ -51,7 +48,10 @@ export class SquareClient {
         },
     };
 
-    constructor(private readonly accessToken: string, config: ISquareClientConfig = {}) {
+    constructor(
+        private readonly accessToken: string,
+        config: ISquareClientConfig = {},
+    ) {
         const { logger, ...configWithoutLogger } = config;
         this.#mergedConfig = mergeDeepProps(this.#defaultConfig, configWithoutLogger);
         this.#mergedConfig.logger = logger;
@@ -223,6 +223,15 @@ export class SquareClient {
         return this.proxy('teamApi', retryableMethods);
     }
 
+    /**
+     * @throws SquareApiException
+     */
+    protected proxy<T extends ApiName>(apiName: T, retryableMethods: FunctionKeys<Client[T]>[]): Client[T] {
+        const api = this.getOriginClient()[apiName];
+
+        return this.proxyWithInstance(apiName, api, retryableMethods);
+    }
+
     private createOriginClient(accessToken: string, { configuration }: Partial<ISquareClientConfig>): Client {
         return new Client({ ...configuration, accessToken });
     }
@@ -256,15 +265,6 @@ export class SquareClient {
         };
 
         return new Proxy<A>(api, handler);
-    }
-
-    /**
-     * @throws SquareApiException
-     */
-    protected proxy<T extends ApiName>(apiName: T, retryableMethods: FunctionKeys<Client[T]>[]): Client[T] {
-        const api = this.getOriginClient()[apiName];
-
-        return this.proxyWithInstance(apiName, api, retryableMethods);
     }
 
     private async makeRetryable<T>(

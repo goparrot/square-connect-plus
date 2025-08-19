@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { expect } from 'chai';
-import type { Order } from 'square';
+import type { Order } from 'square/legacy';
 import type { ObjectLikeType } from '../../../src';
 import { recursiveBigIntToNumber, recursiveNumberToBigInt } from '../../../src';
 

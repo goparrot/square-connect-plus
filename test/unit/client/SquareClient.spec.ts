@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { describe } from 'mocha';
 import {
     ApplePayApi,
     CardsApi,
@@ -24,10 +25,9 @@ import {
     RefundsApi,
     TeamApi,
     TransactionsApi,
-} from 'square';
-import { describe } from 'mocha';
+} from 'square/legacy';
 import type { ISquareClientConfig } from '../../../src';
-import { exponentialDelay, SquareClient } from '../../../src';
+import { exponentialDelay, LegacySquareClient } from '../../../src';
 
 describe('SquareClient (unit)', (): void => {
     const accessToken: string = 'test';
@@ -52,17 +52,17 @@ describe('SquareClient (unit)', (): void => {
 
     describe('#constructor', (): void => {
         it('should be init with accessToken only (default config)', (): void => {
-            new SquareClient(accessToken).should.be.instanceOf(SquareClient);
+            new LegacySquareClient(accessToken).should.be.instanceOf(LegacySquareClient);
         });
 
         it('should be init with accessToken and config', (): void => {
-            new SquareClient(accessToken, config).should.be.instanceOf(SquareClient);
+            new LegacySquareClient(accessToken, config).should.be.instanceOf(LegacySquareClient);
         });
     });
 
     describe('#generateIdempotencyKey', (): void => {
         it('should return string', (): void => {
-            SquareClient.generateIdempotencyKey()
+            LegacySquareClient.generateIdempotencyKey()
                 .should.be.match(new RegExp(`\\b[0-9a-f]{8}\\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\\b[0-9a-f]{12}\\b`))
                 .and.lengthOf(36);
         });
@@ -70,7 +70,7 @@ describe('SquareClient (unit)', (): void => {
 
     describe('#getConfig', (): void => {
         it('should return default configuration', (): void => {
-            new SquareClient(accessToken).getConfig().should.be.deep.eq({
+            new LegacySquareClient(accessToken).getConfig().should.be.deep.eq({
                 retry: {
                     maxRetries: 6,
                     retryDelay: exponentialDelay,
@@ -86,13 +86,13 @@ describe('SquareClient (unit)', (): void => {
         });
 
         it('should return custom configuration', (): void => {
-            new SquareClient(accessToken, config).getConfig().should.be.deep.eq(config);
+            new LegacySquareClient(accessToken, config).getConfig().should.be.deep.eq(config);
         });
     });
 
     describe('#getOriginClient', (): void => {
         it('should return Client with default configuration', (): void => {
-            const client: Client = new SquareClient(accessToken).getOriginClient();
+            const client: Client = new LegacySquareClient(accessToken).getOriginClient();
             // @ts-ignore
             const defaultConfig = client._config;
 
@@ -106,7 +106,7 @@ describe('SquareClient (unit)', (): void => {
         });
 
         it('should return Client with custom configuration', (): void => {
-            const client: Client = new SquareClient(accessToken, config).getOriginClient();
+            const client: Client = new LegacySquareClient(accessToken, config).getOriginClient();
             // @ts-ignore
             const defaultConfig = client._config;
 
@@ -118,134 +118,134 @@ describe('SquareClient (unit)', (): void => {
         });
 
         it('should return the same object on second call', (): void => {
-            const squareClient: SquareClient = new SquareClient(accessToken);
+            const squareClient: LegacySquareClient = new LegacySquareClient(accessToken);
             squareClient.getOriginClient().should.be.deep.eq(squareClient.getOriginClient());
         });
     });
 
     describe('#getApplePayApi', (): void => {
         it('should return ApplePayApi', (): void => {
-            expect(new SquareClient(accessToken).getApplePayApi()).to.be.instanceOf(ApplePayApi);
+            expect(new LegacySquareClient(accessToken).getApplePayApi()).to.be.instanceOf(ApplePayApi);
         });
     });
 
     describe('#getCatalogApi', (): void => {
         it('should return CatalogApi', (): void => {
-            expect(new SquareClient(accessToken).getCatalogApi()).to.be.instanceOf(CatalogApi);
+            expect(new LegacySquareClient(accessToken).getCatalogApi()).to.be.instanceOf(CatalogApi);
         });
     });
 
     describe('#getCheckoutApi', (): void => {
         it('should return CheckoutApi', (): void => {
-            expect(new SquareClient(accessToken).getCheckoutApi()).to.be.instanceOf(CheckoutApi);
+            expect(new LegacySquareClient(accessToken).getCheckoutApi()).to.be.instanceOf(CheckoutApi);
         });
     });
 
     describe('#getCustomersApi', (): void => {
         it('should return CustomersApi', (): void => {
-            expect(new SquareClient(accessToken).getCustomersApi()).to.be.instanceOf(CustomersApi);
+            expect(new LegacySquareClient(accessToken).getCustomersApi()).to.be.instanceOf(CustomersApi);
         });
     });
 
     describe('#getLoyaltyApi', (): void => {
         it('should return LoyaltyApi', (): void => {
-            expect(new SquareClient(accessToken).getLoyaltyApi()).to.be.instanceOf(LoyaltyApi);
+            expect(new LegacySquareClient(accessToken).getLoyaltyApi()).to.be.instanceOf(LoyaltyApi);
         });
     });
 
     describe('#getEmployeesApi', (): void => {
         it('should return EmployeesApi', (): void => {
-            expect(new SquareClient(accessToken).getEmployeesApi()).to.be.instanceOf(EmployeesApi);
+            expect(new LegacySquareClient(accessToken).getEmployeesApi()).to.be.instanceOf(EmployeesApi);
         });
     });
 
     describe('#getInventoryApi', (): void => {
         it('should return InventoryApi', (): void => {
-            expect(new SquareClient(accessToken).getInventoryApi()).to.be.instanceOf(InventoryApi);
+            expect(new LegacySquareClient(accessToken).getInventoryApi()).to.be.instanceOf(InventoryApi);
         });
     });
 
     describe('#getLaborApi', (): void => {
         it('should return LaborApi', (): void => {
-            expect(new SquareClient(accessToken).getLaborApi()).to.be.instanceOf(LaborApi);
+            expect(new LegacySquareClient(accessToken).getLaborApi()).to.be.instanceOf(LaborApi);
         });
     });
 
     describe('#getLocationsApi', (): void => {
         it('should return LocationsApi', (): void => {
-            expect(new SquareClient(accessToken).getLocationsApi()).to.be.instanceOf(LocationsApi);
+            expect(new LegacySquareClient(accessToken).getLocationsApi()).to.be.instanceOf(LocationsApi);
         });
     });
 
     describe('#getLocationsApi', (): void => {
         it('should return MerchantsApi', (): void => {
-            expect(new SquareClient(accessToken).getMerchantsApi()).to.be.instanceOf(MerchantsApi);
+            expect(new LegacySquareClient(accessToken).getMerchantsApi()).to.be.instanceOf(MerchantsApi);
         });
     });
 
     describe('#getMobileAuthorizationApi', (): void => {
         it('should return MobileAuthorizationApi', (): void => {
-            expect(new SquareClient(accessToken).getMobileAuthorizationApi()).to.be.instanceOf(MobileAuthorizationApi);
+            expect(new LegacySquareClient(accessToken).getMobileAuthorizationApi()).to.be.instanceOf(MobileAuthorizationApi);
         });
     });
 
     describe('#getOAuthApi', (): void => {
         it('should return OAuthApi', (): void => {
-            expect(new SquareClient(accessToken).getOAuthApi()).to.be.instanceOf(OAuthApi);
+            expect(new LegacySquareClient(accessToken).getOAuthApi()).to.be.instanceOf(OAuthApi);
         });
     });
 
     describe('#getOrdersApi', (): void => {
         it('should return OrdersApi', (): void => {
-            expect(new SquareClient(accessToken).getOrdersApi()).to.be.instanceOf(OrdersApi);
+            expect(new LegacySquareClient(accessToken).getOrdersApi()).to.be.instanceOf(OrdersApi);
         });
     });
 
     describe('#getPaymentsApi', (): void => {
         it('should return PaymentsApi', (): void => {
-            expect(new SquareClient(accessToken).getPaymentsApi()).to.be.instanceOf(PaymentsApi);
+            expect(new LegacySquareClient(accessToken).getPaymentsApi()).to.be.instanceOf(PaymentsApi);
         });
     });
 
     describe('#getGiftCardsApi', (): void => {
         it('should return GiftCardsApi', (): void => {
-            expect(new SquareClient(accessToken).getGiftCardsApi()).to.be.instanceOf(GiftCardsApi);
+            expect(new LegacySquareClient(accessToken).getGiftCardsApi()).to.be.instanceOf(GiftCardsApi);
         });
     });
 
     describe('#getGiftCardActivitiesApi', (): void => {
         it('should return GiftCardActivitiesApi', (): void => {
-            expect(new SquareClient(accessToken).getGiftCardActivitiesApi()).to.be.instanceOf(GiftCardActivitiesApi);
+            expect(new LegacySquareClient(accessToken).getGiftCardActivitiesApi()).to.be.instanceOf(GiftCardActivitiesApi);
         });
     });
 
     describe('#getRefundsApi', (): void => {
         it('should return RefundsApi', (): void => {
-            expect(new SquareClient(accessToken).getRefundsApi()).to.be.instanceOf(RefundsApi);
+            expect(new LegacySquareClient(accessToken).getRefundsApi()).to.be.instanceOf(RefundsApi);
         });
     });
 
     describe('#getTransactionsApi', (): void => {
         it('should return TransactionsApi', (): void => {
-            expect(new SquareClient(accessToken).getTransactionsApi()).to.be.instanceOf(TransactionsApi);
+            expect(new LegacySquareClient(accessToken).getTransactionsApi()).to.be.instanceOf(TransactionsApi);
         });
     });
 
     describe('#getCardsApi', (): void => {
         it('should return CardsApi', (): void => {
-            expect(new SquareClient(accessToken).getCardsApi()).to.be.instanceOf(CardsApi);
+            expect(new LegacySquareClient(accessToken).getCardsApi()).to.be.instanceOf(CardsApi);
         });
     });
 
     describe('#getInvoiceApi', (): void => {
         it('should return getInvoiceApi', (): void => {
-            expect(new SquareClient(accessToken).getInvoiceApi()).to.be.instanceOf(InvoicesApi);
+            expect(new LegacySquareClient(accessToken).getInvoiceApi()).to.be.instanceOf(InvoicesApi);
         });
     });
 
     describe('#getTeamApi', (): void => {
         it('should return getTeamApi', (): void => {
-            expect(new SquareClient(accessToken).getTeamApi()).to.be.instanceOf(TeamApi);
+            expect(new LegacySquareClient(accessToken).getTeamApi()).to.be.instanceOf(TeamApi);
         });
     });
 });

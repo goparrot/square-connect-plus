@@ -3,8 +3,8 @@ import type { ObjectLikeType } from '../interface';
 export type ReturnRecursiveBigIntToNumberType<T> = T extends bigint
     ? number
     : T extends ReadonlyArray<any> | ArrayLike<any> | ObjectLikeType
-    ? { [key in keyof T]: ReturnRecursiveBigIntToNumberType<T[key]> }
-    : T;
+      ? { [key in keyof T]: ReturnRecursiveBigIntToNumberType<T[key]> }
+      : T;
 
 export function recursiveBigIntToNumber<T>(body: T): ReturnRecursiveBigIntToNumberType<T> {
     if (body === undefined || body === null || !['object', 'bigint'].includes(typeof body)) {
@@ -32,8 +32,8 @@ export function recursiveBigIntToNumber<T>(body: T): ReturnRecursiveBigIntToNumb
 export type ReturnRecursiveNumberToBigIntType<T> = T extends number
     ? bigint
     : T extends ReadonlyArray<any> | ArrayLike<any> | ObjectLikeType
-    ? { [key in keyof T]: ReturnRecursiveBigIntToNumberType<T[key]> }
-    : T;
+      ? { [key in keyof T]: ReturnRecursiveBigIntToNumberType<T[key]> }
+      : T;
 
 /* global BigInt */
 export function recursiveNumberToBigInt<T>(body: T): ReturnRecursiveNumberToBigIntType<T> {

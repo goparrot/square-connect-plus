@@ -5,5 +5,5 @@
         "resolveJsonModule": true,
         "strict": true
     },
-    "include": ["./**/**.ts", "./**/**.js", "./**/**.json"]
+    "include": ["./**/**.ts", "./**/**.tsx", "./**/**.js", "./**/**.json"]
 }

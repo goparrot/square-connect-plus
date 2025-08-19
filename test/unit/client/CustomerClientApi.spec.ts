@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import type { SinonSandbox, SinonStub } from 'sinon';
 import { createSandbox } from 'sinon';
-import type { Customer, CustomerFilter, SearchCustomersRequest } from 'square';
+import type { Customer, CustomerFilter, SearchCustomersRequest } from 'square/legacy';
 import type { IFindOrCreateCustomerRequest } from '../../../src';
 import { CustomerClientApi, SquareClientFactory } from '../../../src';
 

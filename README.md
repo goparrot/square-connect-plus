@@ -5,33 +5,44 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
+
+> [!WARNING]  
+> The **square-connect-plus** package should only be used to support **legacy code** that relies on the legacy Square API Client, which is still distributed
+> alongside the refactored client in the `square` package (v40.0.0+).
+>
+> If you plan to fully adopt the mainstream version of the Square API Client, you can **ignore this package**. All features that were previously missing in the
+> legacy client (and implemented by `square-connect-plus`) are now part of the mainstream client.
+>
+> For migration guidance from the legacy client (≤ v39.1.0) to the mainstream client (v40.0.0+), install the `square` package directly in your service and
+> follow the [official migration guide](https://developer.squareup.com/docs/sdks/nodejs/migration).
+
 # Square Connect Plus
 
 **Square Connect Plus** is a Typescript library which extends the official Square Node.js SDK library with additional functionality.
 The library does not modify request and response payload.
 
--   [Installation](#installation)
--   [Usage](#usage)
--   [Versioning](#versioning)
--   [Contributing](#contributing)
--   [Unit Tests](#unit-tests)
--   [Background](#background)
--   [License](#license)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Versioning](#versioning)
+- [Contributing](#contributing)
+- [Unit Tests](#unit-tests)
+- [Background](#background)
+- [License](#license)
 
 ## Installation
 
-    $ npm i @goparrot/square-connect-plus square@17.0.0
+    $ npm i @goparrot/square-connect-plus square@40.0.0
 
 ## Usage
 
 ### Simple example
 
 ```typescript
-import { SquareClient } from '@goparrot/square-connect-plus';
-import { ListLocationsResponse } from 'square';
+import { LegacySquareClient } from '@goparrot/square-connect-plus';
+import { ListLocationsResponse } from 'square/legacy';
 
 const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN}`;
-const squareClient: SquareClient = new SquareClient(accessToken);
+const squareClient: LegacySquareClient = new LegacySquareClient(accessToken);
 
 (async () => {
     try {
@@ -52,10 +63,10 @@ const squareClient: SquareClient = new SquareClient(accessToken);
 ### Advanced example
 
 ```typescript
-import { SquareClient, exponentialDelay, retryCondition } from '@goparrot/square-connect-plus';
+import { LegacySquareClient, exponentialDelay, retryCondition } from '@goparrot/square-connect-plus';
 
 const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN}`;
-const squareClient: SquareClient = new SquareClient(accessToken, {
+const squareClient: LegacySquareClient = new LegacySquareClient(accessToken, {
     retry: {
         maxRetries: 10,
     },
@@ -71,7 +82,7 @@ const squareClient: SquareClient = new SquareClient(accessToken, {
 ### `retry` Options
 
 | Name           | Type       | Default            | Description                                                                                                                                                                                                                                 |
-| -------------- | ---------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|----------------|------------|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | maxRetries     | `Number`   | `6`                | The number of times to retry before failing.                                                                                                                                                                                                |
 | retryCondition | `Function` | `retryCondition`   | A callback to further control if a request should be retried. By default, the built-in `retryCondition` function is used.                                                                                                                   |
 | retryDelay     | `Function` | `exponentialDelay` | A callback to further control the delay between retried requests. By default, the built-in `exponentialDelay` function is used ([Exponential Backoff](https://developers.google.com/analytics/devguides/reporting/core/v3/errors#backoff)). |
@@ -81,7 +92,7 @@ const squareClient: SquareClient = new SquareClient(accessToken, {
 A set of possible settings for the original library.
 
 | Name              | Type     | Default                        | Description                                                               |
-| ----------------- | -------- | ------------------------------ | ------------------------------------------------------------------------- |
+|-------------------|----------|--------------------------------|---------------------------------------------------------------------------|
 | customUrl         | `String` | `https://connect.squareup.com` | The custom URL against which to resolve every API call's (relative) path. |
 | additionalHeaders | `Object` | `{}`                           | Record<string, string>                                                    |
 | timeout           | `Number` | `60_000`                       | The default HTTP timeout for all API calls.                               |
