@@ -20,7 +20,7 @@ The library does not modify request and response payload.
 
 ## Installation
 
-    $ npm i @goparrot/square-connect-plus square@17.0.0
+    $ npm i @goparrot/square-connect-plus square@21.1.0
 
 ## Usage
 
