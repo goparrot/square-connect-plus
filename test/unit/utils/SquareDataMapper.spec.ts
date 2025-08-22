@@ -115,11 +115,11 @@ describe('SquareDataMapper', () => {
 
             const { lineItems, locationId } = SquareDataMapper.toNewFormat<Order>(orderWithOldFormat);
             locationId.should.equal(orderWithOldFormat.location_id);
-            const { basePriceMoney, name, quantity }: OrderLineItem = lineItems[0];
-            name.should.be.equal(orderWithOldFormat.line_items?.[0]?.name);
+            const { basePriceMoney, name, quantity }: OrderLineItem = lineItems![0];
+            name?.should.be.equal(orderWithOldFormat.line_items?.[0]?.name);
             quantity.should.be.equal(orderWithOldFormat.line_items?.[0]?.quantity);
 
-            assert.strictEqual(basePriceMoney.amount, recursiveNumberToBigInt(100));
+            assert.strictEqual(basePriceMoney?.amount, recursiveNumberToBigInt(100));
         });
     });
 

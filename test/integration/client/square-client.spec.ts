@@ -98,7 +98,7 @@ describe('SquareClient (integration)', (): void => {
 
             const { order }: CalculateOrderResponse = (await apiClient.getOrdersApi().calculateOrder({ order: orderPayload })).result;
 
-            recursiveBigIntToNumber(order).totalMoney?.amount?.should.eq(100);
+            recursiveBigIntToNumber(order!).totalMoney?.amount?.should.eq(100);
         });
     });
 });
