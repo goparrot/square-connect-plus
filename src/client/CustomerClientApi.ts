@@ -1,5 +1,5 @@
-import type { Customer, SearchCustomersRequest } from 'square';
-import { CustomersApi } from 'square';
+import type { Customer, SearchCustomersRequest } from 'square/legacy';
+import { CustomersApi } from 'square/legacy';
 import type { IFindOrCreateCustomerRequest } from '../interface';
 
 export class CustomerClientApi extends CustomersApi {

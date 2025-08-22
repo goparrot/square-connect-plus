@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import nock, { cleanAll } from 'nock';
-import { DEFAULT_CONFIGURATION, Environment } from 'square';
+import { DEFAULT_CONFIGURATION, Environment } from 'square/legacy';
 import type { ISquareClientConfig } from '../../../src';
-import { SquareClient, SquareApiException, exponentialDelay } from '../../../src';
+import { exponentialDelay, SquareApiException, SquareClient } from '../../../src';
 
 describe('SquareClient (e2e)', (): void => {
     const accessToken: string = 'test';

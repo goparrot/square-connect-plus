@@ -1,5 +1,5 @@
-import type { Error as SquareError } from 'square';
-import { ApiError } from 'square';
+import type { Error as SquareError } from 'square/legacy';
+import { ApiError } from 'square/legacy';
 import type { ISquareApiException } from './ISquareApiException';
 
 export class SquareApiException extends Error implements ISquareApiException {

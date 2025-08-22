@@ -2,17 +2,17 @@ import { expect } from 'chai';
 import {
     Client,
     CustomersApi,
+    DEFAULT_CONFIGURATION,
+    Environment,
+    GiftCardActivitiesApi,
+    GiftCardsApi,
     LocationsApi,
     OrdersApi,
     PaymentsApi,
     RefundsApi,
-    Environment,
-    DEFAULT_CONFIGURATION,
-    GiftCardsApi,
-    GiftCardActivitiesApi,
-} from 'square';
+} from 'square/legacy';
 import type { ISquareClientConfig } from '../../../src';
-import { SquareClient, SquareClientFactory, exponentialDelay } from '../../../src';
+import { exponentialDelay, SquareClient, SquareClientFactory } from '../../../src';
 
 describe('SquareClientFactory (unit)', (): void => {
     const accessToken: string = 'test';

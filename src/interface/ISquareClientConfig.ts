@@ -1,4 +1,4 @@
-import type { Configuration } from 'square';
+import type { Configuration } from 'square/legacy';
 import type { ILogger } from '../logger';
 import type { IRetriesOptions } from './IRetriesOptions';
 

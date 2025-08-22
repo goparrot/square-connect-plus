@@ -1,7 +1,7 @@
 import * as assert from 'assert'; // Node.js
-import type { Order, OrderLineItem, PublishInvoiceRequest } from 'square';
 // eslint-disable-next-line import/no-unresolved
 import type { Order as SquareConnectOrder, PublishInvoiceRequest as SquareConnectPublishInvoiceRequest } from 'square-connect';
+import type { Order, OrderLineItem, PublishInvoiceRequest } from 'square/legacy';
 import { recursiveNumberToBigInt, SquareDataMapper } from '../../../src';
 
 describe('SquareDataMapper', () => {
@@ -115,11 +115,11 @@ describe('SquareDataMapper', () => {
 
             const { lineItems, locationId } = SquareDataMapper.toNewFormat<Order>(orderWithOldFormat);
             locationId.should.equal(orderWithOldFormat.location_id);
-            const { basePriceMoney, name, quantity }: OrderLineItem = lineItems![0];
-            name!.should.be.equal(orderWithOldFormat.line_items?.[0]?.name);
+            const { basePriceMoney, name, quantity }: OrderLineItem = lineItems[0];
+            name.should.be.equal(orderWithOldFormat.line_items?.[0]?.name);
             quantity.should.be.equal(orderWithOldFormat.line_items?.[0]?.quantity);
 
-            assert.strictEqual(basePriceMoney!.amount, recursiveNumberToBigInt(100));
+            assert.strictEqual(basePriceMoney.amount, recursiveNumberToBigInt(100));
         });
     });
 

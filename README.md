@@ -28,7 +28,7 @@ The library does not modify request and response payload.
 
 ```typescript
 import { SquareClient } from '@goparrot/square-connect-plus';
-import { ListLocationsResponse } from 'square';
+import { ListLocationsResponse } from 'square/legacy';
 
 const accessToken: string = `${process.env.SQUARE_ACCESS_TOKEN}`;
 const squareClient: SquareClient = new SquareClient(accessToken);

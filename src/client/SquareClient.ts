@@ -21,11 +21,10 @@ import type {
     RefundsApi,
     TeamApi,
     TransactionsApi,
-} from 'square';
-import { Client, DEFAULT_CONFIGURATION } from 'square';
+} from 'square/legacy';
+import { Client, DEFAULT_CONFIGURATION } from 'square/legacy';
+import type { $Keys, FunctionKeys } from 'utility-types';
 import { v4 as uuidv4 } from 'uuid';
-import type { FunctionKeys } from 'utility-types';
-import type { BaseApi } from 'square/dist/api/baseApi';
 import { SquareApiException } from '../exception';
 import type { ISquareClientConfig, ISquareClientDefaultConfig, ISquareClientMergedConfig } from '../interface';
 import type { ILogger } from '../logger';
@@ -33,9 +32,7 @@ import { NullLogger } from '../logger';
 import { exponentialDelay, isRetryableSquareApiException, mergeDeepProps, sleep } from '../utils';
 import { CustomerClientApi } from './CustomerClientApi';
 
-type ApiName = {
-    [key in keyof Client]: Client[key] extends BaseApi ? key : never;
-}[keyof Client];
+type ApiName = Extract<$Keys<Client>, `${string}Api`>;
 
 export class SquareClient {
     #client: Client;

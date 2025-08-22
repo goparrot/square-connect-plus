@@ -1,4 +1,4 @@
-import { ApiError } from 'square';
+import { ApiError } from 'square/legacy';
 import { isSquareApiException, SquareApiException } from '../../../src';
 
 describe('isSquareApiException', () => {

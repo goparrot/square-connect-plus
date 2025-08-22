@@ -1,5 +1,5 @@
-import type { CalculateOrderResponse, Order, SearchCustomersRequest } from 'square';
-import { DEFAULT_CONFIGURATION, Environment } from 'square';
+import type { CalculateOrderResponse, Order, SearchCustomersRequest } from 'square/legacy';
+import { DEFAULT_CONFIGURATION, Environment } from 'square/legacy';
 import type { ISquareClientConfig } from '../../../src';
 import { NullLogger, recursiveBigIntToNumber, SquareApiException, SquareClient, SquareDataMapper } from '../../../src';
 
@@ -98,7 +98,7 @@ describe('SquareClient (integration)', (): void => {
 
             const { order }: CalculateOrderResponse = (await apiClient.getOrdersApi().calculateOrder({ order: orderPayload })).result;
 
-            recursiveBigIntToNumber(order!).totalMoney?.amount?.should.eq(100);
+            recursiveBigIntToNumber(order).totalMoney?.amount?.should.eq(100);
         });
     });
 });

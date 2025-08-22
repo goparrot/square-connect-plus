@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { describe } from 'mocha';
 import {
     ApplePayApi,
     CardsApi,
@@ -24,8 +25,7 @@ import {
     RefundsApi,
     TeamApi,
     TransactionsApi,
-} from 'square';
-import { describe } from 'mocha';
+} from 'square/legacy';
 import type { ISquareClientConfig } from '../../../src';
 import { exponentialDelay, SquareClient } from '../../../src';
 
