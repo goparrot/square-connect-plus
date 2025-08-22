@@ -103,7 +103,7 @@
         "remark-lint-strong-marker": "^3.1.1",
         "rimraf": "^3.0.2",
         "sinon": "^13.0.1",
-        "square": "^21.1.0",
+        "square": "^43.0.2",
         "standard-version": "^9.3.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.5.0",
@@ -113,7 +113,7 @@
     "peerDependencies": {
         "lodash.camelcase": "^4.3.0",
         "lodash.snakecase": "^4.1.1",
-        "square": ">=21.1.0",
+        "square": ">=40.0.0",
         "uuid": "^8.3.2"
     },
     "engines": {
