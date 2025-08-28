@@ -187,7 +187,7 @@ export class SquareClientNext {
     }
 
     private getLogger(): ILogger {
-        return this.#mergedConfig.logger ?? (this.#mergedConfig.logger = new NullLogger());
+        return (this.#mergedConfig.logger ??= new NullLogger());
     }
 
     /**
