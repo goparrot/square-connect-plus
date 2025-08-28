@@ -71,6 +71,8 @@
         "@commitlint/config-conventional": "^19.2.2",
         "@goparrot/eslint-config": "1.1.1",
         "@tsconfig/node20": "^20.1.6",
+        "@typescript-eslint/eslint-plugin": "^7.18.0",
+        "@typescript-eslint/parser": "^7.18.0",
         "@types/chai": "^4.3.0",
         "@types/chai-as-promised": "^7.1.5",
         "@types/lodash.camelcase": "^4.3.6",
@@ -108,7 +110,7 @@
         "standard-version": "^9.3.2",
         "ts-node": "^10.9.2",
         "type-fest": "^4.41.0",
-        "typescript": "^5.5.0",
+        "typescript": "^5.9.2",
         "utility-types": "^3.10.0",
         "uuid": "^8.3.2"
     },
