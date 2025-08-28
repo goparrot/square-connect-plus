@@ -27,15 +27,13 @@ module.exports = {
     ],
     extends: ['@goparrot/eslint-config/recommended', '@goparrot/eslint-config/less-strict'],
     settings: {
-        // Use node resolver only - completely avoid typescript resolver native binding issues
-        'import/resolver': {
-            node: {
-                extensions: ['.js', '.ts'],
-            },
-        },
+        // Completely disable import resolution to avoid native binding issues on Node v20
+        'import/resolver': 'node',
+        'import/ignore': ['.*'],
     },
     rules: {
-        // Disable ALL import rules that use typescript resolver (native binding issues on Node v20)
+        // Completely disable eslint-plugin-import to avoid native binding issues on Node v20
+        'import/order': 'off',
         'import/no-deprecated': 'off',
         'import/namespace': 'off',
         'import/named': 'off',
@@ -44,5 +42,9 @@ module.exports = {
         'import/no-duplicates': 'off',
         'import/no-unresolved': 'off',
         'import/no-cycle': 'off',
+        'import/first': 'off',
+        'import/no-mutable-exports': 'off',
+        'import/prefer-default-export': 'off',
+        'import/extensions': 'off',
     },
 };
