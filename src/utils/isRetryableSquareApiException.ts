@@ -1,5 +1,5 @@
 import type { Error as SquareError } from 'square/legacy';
-import { retryableErrorCodes } from '../constants';
+import { retryableErrorCodes } from '../constant/retryableErrorCodes';
 import type { SquareApiException } from '../exception';
 
 export function isRetryableSquareApiException(error: SquareApiException): boolean {

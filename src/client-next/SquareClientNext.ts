@@ -1,49 +1,72 @@
 import upperFirst from 'lodash.upperfirst';
-import { SquareClient } from 'square';
-import type { ApplePay } from 'square/api/resources/applePay/client/Client';
-import type { Cards } from 'square/api/resources/cards/client/Client';
-import type { Catalog } from 'square/api/resources/catalog/client/Client';
-import type { Checkout } from 'square/api/resources/checkout/client/Client';
-import type { Customers } from 'square/api/resources/customers/client/Client';
-import type { Employees } from 'square/api/resources/employees/client/Client';
-import type { GiftCards } from 'square/api/resources/giftCards/client/Client';
-import type { Inventory } from 'square/api/resources/inventory/client/Client';
-import type { Invoices } from 'square/api/resources/invoices/client/Client';
-import type { Labor } from 'square/api/resources/labor/client/Client';
-import type { Locations } from 'square/api/resources/locations/client/Client';
-import type { Loyalty } from 'square/api/resources/loyalty/client/Client';
-import type { Merchants } from 'square/api/resources/merchants/client/Client';
-import type { Mobile } from 'square/api/resources/mobile/client/Client';
-import type { OAuth } from 'square/api/resources/oAuth/client/Client';
-import type { Orders } from 'square/api/resources/orders/client/Client';
-import type { Payments } from 'square/api/resources/payments/client/Client';
-import type { Refunds } from 'square/api/resources/refunds/client/Client';
-import type { Team } from 'square/api/resources/team/client/Client';
-import type { V1Transactions } from 'square/api/resources/v1Transactions/client/Client';
-import { type ApiResponse, DEFAULT_CONFIGURATION } from 'square/legacy';
-import type { FunctionKeys, NonFunctionKeys, ReadonlyKeys } from 'utility-types';
+import { SquareClient, SquareEnvironment } from 'square';
+import type { Environment } from 'square-legacy/src/configuration';
+import type { FunctionKeys } from 'utility-types';
 import { v4 as uuidv4 } from 'uuid';
 import { SquareApiException } from '../exception';
 import type { ISquareClientConfig, ISquareClientDefaultConfig, ISquareClientMergedConfig } from '../interface';
 import type { ILogger } from '../logger';
 import { NullLogger } from '../logger';
+import type {
+    ApplePayClient,
+    ApplePayMethod,
+    CardsClient,
+    CardsMethod,
+    CatalogClient,
+    CatalogMethod,
+    CheckoutClient,
+    CheckoutMethod,
+    CustomersClient,
+    CustomersMethod,
+    EmployeesClient,
+    EmployeesMethod,
+    GiftCardsClient,
+    GiftCardsMethod,
+    InventoryClient,
+    InventoryMethod,
+    InvoicesClient,
+    InvoicesMethod,
+    LaborClient,
+    LaborMethod,
+    LocationsClient,
+    LocationsMethod,
+    LoyaltyClient,
+    LoyaltyMethod,
+    MerchantsClient,
+    MerchantsMethod,
+    MobileClient,
+    MobileMethod,
+    OAuthClient,
+    OAuthMethod,
+    OrdersClient,
+    OrdersMethod,
+    PaymentsClient,
+    PaymentsMethod,
+    RefundsClient,
+    RefundsMethod,
+    SquareClientResourceName,
+    TeamClient,
+    TeamMethod,
+    V1TransactionsClient,
+    V1TransactionsMethod,
+} from '../type/SquareResourceTypes';
 import { exponentialDelay, isRetryableSquareApiException, mergeDeepProps, sleep } from '../utils';
-
-type ApiName = Extract<ReadonlyKeys<SquareClient>, NonFunctionKeys<SquareClient>>;
 
 export class SquareClientNext {
     #client: SquareClient;
     readonly #mergedConfig: ISquareClientMergedConfig;
     readonly #defaultConfig: ISquareClientDefaultConfig = {
-        retry: {
-            maxRetries: 6,
-            retryDelay: exponentialDelay,
-        },
+        retry: { maxRetries: 6, retryDelay: exponentialDelay },
         // ! configuration interface was changed
-        configuration: DEFAULT_CONFIGURATION,
-        logContext: {
-            merchantId: 'unknown',
+        configuration: {
+            timeout: 60000,
+            squareVersion: '2024-12-18',
+            additionalHeaders: {},
+            userAgentDetail: '',
+            environment: SquareEnvironment.Production as Environment,
+            customUrl: 'https://connect.squareup.com',
         },
+        logContext: { merchantId: 'unknown' },
     };
 
     constructor(private readonly accessToken: string, config: ISquareClientConfig = {}) {
@@ -67,158 +90,100 @@ export class SquareClientNext {
     }
 
     getOriginClient(): SquareClient {
-        this.#client = this.#client ?? this.createOriginClient(this.accessToken, this.#mergedConfig);
-
-        return this.#client;
+        return (this.#client ??= new SquareClient({ ...this.#mergedConfig.configuration, token: this.accessToken }));
     }
 
-    getApplePayApi(retryableMethods: FunctionKeys<ApplePay>[] = []): ApplePay {
+    getApplePayApi(retryableMethods: ApplePayMethod[] = []): ApplePayClient {
         return this.proxy('applePay', retryableMethods);
     }
 
-    getCatalogApi(
-        retryableMethods: FunctionKeys<Catalog>[] = [
-            'batchRetrieveCatalogObjects',
-            'catalogInfo',
-            'listCatalog',
-            'retrieveCatalogObject',
-            'searchCatalogObjects',
-        ],
-    ): Catalog {
+    getCardsApi(retryableMethods: CardsMethod[] = ['get', 'list', 'disable']): CardsClient {
+        return this.proxy('cards', retryableMethods);
+    }
+
+    getCatalogApi(retryableMethods: CatalogMethod[] = ['batchGet', 'info', 'list', 'search', 'searchItems']): CatalogClient {
         return this.proxy('catalog', retryableMethods);
     }
 
-    getCheckoutApi(retryableMethods: FunctionKeys<Checkout>[] = []): Checkout {
+    getCheckoutApi(retryableMethods: CheckoutMethod[] = []): CheckoutClient {
         return this.proxy('checkout', retryableMethods);
     }
 
-    getCustomersApi(retryableMethods: FunctionKeys<Customers>[] = ['listCustomers', 'retrieveCustomer', 'searchCustomers', 'deleteCustomerCard']): Customers {
+    getCustomersApi(retryableMethods: CustomersMethod[] = ['get', 'list', 'search', 'delete']): CustomersClient {
         return this.proxy('customers', retryableMethods);
     }
 
-    getEmployeesApi(retryableMethods: FunctionKeys<Employees>[] = ['listEmployees', 'retrieveEmployee']): Employees {
+    getEmployeesApi(retryableMethods: EmployeesMethod[] = ['get', 'list']): EmployeesClient {
         return this.proxy('employees', retryableMethods);
     }
 
-    getLoyaltyApi(
-        retryableMethods: FunctionKeys<Loyalty>[] = [
-            'listLoyaltyPrograms',
-            'searchLoyaltyEvents',
-            'searchLoyaltyAccounts',
-            'retrieveLoyaltyAccount',
-            'retrieveLoyaltyProgram',
-        ],
-    ): Loyalty {
+    getLoyaltyApi(retryableMethods: LoyaltyMethod[] = ['searchEvents']): LoyaltyClient {
         return this.proxy('loyalty', retryableMethods);
     }
 
     getInventoryApi(
-        retryableMethods: FunctionKeys<Inventory>[] = [
-            'batchRetrieveInventoryChanges',
-            'batchRetrieveInventoryCounts',
-            'retrieveInventoryAdjustment',
-            'retrieveInventoryChanges',
-            'retrieveInventoryCount',
-            'retrieveInventoryPhysicalCount',
-        ],
-    ): Inventory {
+        retryableMethods: InventoryMethod[] = ['getAdjustment', 'batchGetChanges', 'batchGetCounts', 'getPhysicalCount', 'getTransfer', 'get', 'changes'],
+    ): InventoryClient {
         return this.proxy('inventory', retryableMethods);
     }
 
-    getLaborApi(
-        retryableMethods: FunctionKeys<Labor>[] = [
-            'getBreakType',
-            'getEmployeeWage',
-            'getShift',
-            'listBreakTypes',
-            'listEmployeeWages',
-            'listWorkweekConfigs',
-            'searchShifts',
-        ],
-    ): Labor {
+    getLaborApi(retryableMethods: LaborMethod[] = []): LaborClient {
         return this.proxy('labor', retryableMethods);
     }
 
-    getLocationsApi(retryableMethods: FunctionKeys<Locations>[] = ['listLocations']): Locations {
+    getLocationsApi(retryableMethods: LocationsMethod[] = ['list']): LocationsClient {
         return this.proxy('locations', retryableMethods);
     }
 
-    getMerchantsApi(retryableMethods: FunctionKeys<Merchants>[] = ['retrieveMerchant', 'listMerchants']): Merchants {
+    getMerchantsApi(retryableMethods: MerchantsMethod[] = ['get', 'list']): MerchantsClient {
         return this.proxy('merchants', retryableMethods);
     }
 
-    getMobileAuthorizationApi(retryableMethods: FunctionKeys<Mobile>[] = []): Mobile {
+    getMobileAuthorizationApi(retryableMethods: MobileMethod[] = []): MobileClient {
         return this.proxy('mobile', retryableMethods);
     }
 
-    getOAuthApi(retryableMethods: FunctionKeys<OAuth>[] = ['obtainToken']): OAuth {
+    getOAuthApi(retryableMethods: OAuthMethod[] = ['obtainToken']): OAuthClient {
         return this.proxy('oAuth', retryableMethods);
     }
 
-    getOrdersApi(retryableMethods: FunctionKeys<Orders>[] = ['batchRetrieveOrders', 'searchOrders', 'createOrder', 'payOrder', 'calculateOrder']): Orders {
+    getOrdersApi(retryableMethods: OrdersMethod[] = ['batchGet', 'calculate', 'search', 'create', 'pay']): OrdersClient {
         return this.proxy('orders', retryableMethods);
     }
 
-    getPaymentsApi(retryableMethods: FunctionKeys<Payments>[] = ['getPayment', 'listPayments', 'createPayment', 'cancelPayment']): Payments {
+    getPaymentsApi(retryableMethods: PaymentsMethod[] = ['list', 'create', 'get', 'cancel']): PaymentsClient {
         return this.proxy('payments', retryableMethods);
     }
 
     getGiftCardsApi(
-        retryableMethods: FunctionKeys<GiftCards>[] = [
-            'listGiftCards',
-            'createGiftCard',
-            'retrieveGiftCardFromGAN',
-            'retrieveGiftCardFromNonce',
-            'linkCustomerToGiftCard',
-            'unlinkCustomerFromGiftCard',
-            'retrieveGiftCard',
-        ],
-    ): GiftCards {
+        retryableMethods: GiftCardsMethod[] = ['list', 'create', 'getFromGan', 'getFromNonce', 'linkCustomer', 'unlinkCustomer', 'get'],
+    ): GiftCardsClient {
         return this.proxy('giftCards', retryableMethods);
     }
 
-    getRefundsApi(retryableMethods: FunctionKeys<Refunds>[] = ['getPaymentRefund', 'listPaymentRefunds', 'refundPayment']): Refunds {
+    getRefundsApi(retryableMethods: RefundsMethod[] = ['list', 'refundPayment', 'get']): RefundsClient {
         return this.proxy('refunds', retryableMethods);
     }
 
-    getTransactionsApi(retryableMethods: FunctionKeys<V1Transactions>[] = ['listTransactions', 'retrieveTransaction']): V1Transactions {
+    getTransactionsApi(retryableMethods: V1TransactionsMethod[] = ['v1ListOrders', 'v1RetrieveOrder']): V1TransactionsClient {
         return this.proxy('v1Transactions', retryableMethods);
     }
 
-    getCardsApi(retryableMethods: FunctionKeys<Cards>[] = ['listCards', 'retrieveCard', 'disableCard']): Cards {
-        return this.proxy('cards', retryableMethods);
-    }
-
-    getInvoiceApi(retryableMethods: FunctionKeys<Invoices>[] = ['listInvoices', 'searchInvoices', 'getInvoice']): Invoices {
+    getInvoiceApi(retryableMethods: InvoicesMethod[] = ['list', 'search', 'get']): InvoicesClient {
         return this.proxy('invoices', retryableMethods);
     }
 
-    getTeamApi(
-        retryableMethods: FunctionKeys<Team>[] = [
-            'createTeamMember',
-            'bulkCreateTeamMembers',
-            'bulkUpdateTeamMembers',
-            'searchTeamMembers',
-            'retrieveTeamMember',
-            'updateTeamMember',
-            'retrieveWageSetting',
-            'updateWageSetting',
-        ],
-    ): Team {
+    getTeamApi(retryableMethods: TeamMethod[] = ['listJobs', 'createJob', 'retrieveJob', 'updateJob']): TeamClient {
         return this.proxy('team', retryableMethods);
     }
 
     /**
      * @throws SquareApiException
      */
-    protected proxy<T extends ApiName>(apiName: T, retryableMethods: FunctionKeys<SquareClient[T]>[]): SquareClient[T] {
+    protected proxy<T extends SquareClientResourceName>(apiName: T, retryableMethods: FunctionKeys<SquareClient[T]>[]): SquareClient[T] {
         const api = this.getOriginClient()[apiName];
 
         return this.proxyWithInstance(apiName, api, retryableMethods);
-    }
-
-    private createOriginClient(token: string, { configuration }: Partial<ISquareClientConfig>): SquareClient {
-        return new SquareClient({ ...configuration, token });
     }
 
     private getLogger(): ILogger {
@@ -228,16 +193,16 @@ export class SquareClientNext {
     /**
      * @throws SquareApiException
      */
-    private proxyWithInstance<T extends ApiName, A extends SquareClient[T]>(apiName: T, api: A, retryableMethods: FunctionKeys<A>[]): A {
+    private proxyWithInstance<T extends SquareClientResourceName, A extends SquareClient[T]>(apiName: T, api: A, retryableMethods: FunctionKeys<A>[]): A {
         const stackError: string = new Error().stack?.slice(6) || '';
 
         const handler: ProxyHandler<A> = {
             get: (target: A, apiMethodName: string): unknown => {
-                return async (...args: unknown[]): Promise<ApiResponse<T>> => {
-                    const requestFn: (...arg: unknown[]) => Promise<ApiResponse<T>> = target[apiMethodName].bind(target, ...args);
+                return async (...args: unknown[]): Promise<any> => {
+                    const requestFn: (...arg: unknown[]) => Promise<any> = target[apiMethodName].bind(target, ...args);
 
                     try {
-                        return await this.makeRetryable<ApiResponse<T>>(apiName, requestFn, apiMethodName, retryableMethods);
+                        return await this.makeRetryable<any>(apiName, requestFn, apiMethodName, retryableMethods);
                     } catch (err) {
                         if (err instanceof Error) {
                             err.stack += stackError;
@@ -253,7 +218,7 @@ export class SquareClientNext {
     }
 
     private async makeRetryable<T>(
-        apiName: ApiName,
+        apiName: SquareClientResourceName,
         promiseFn: (...arg: unknown[]) => Promise<T>,
         apiMethodName: string,
         retryableMethods: (string | number | symbol)[],
