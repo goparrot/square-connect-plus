@@ -4,7 +4,7 @@ on: [ "push", "pull_request" ]
 
 jobs:
   commitlint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -19,7 +19,7 @@ jobs:
         uses: wagoid/commitlint-github-action@v2
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     strategy:
       matrix:
